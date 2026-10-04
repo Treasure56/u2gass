@@ -1,0 +1,208 @@
+import type { Product, ReceiptItem, HistoryReceipt } from "@/types";
+
+export const products: Product[] = [
+  {
+    product_id: "1",
+    name: "U2 GAS CYLINDER",
+    subtitle: "12.5KG",
+    description: "12.5KG",
+    image: "/images/image1.png",
+    priceNaira: 15000,
+    price_kobo: 1500000,
+    bgColor: "#E9B90D4D",
+    unavailable: false,
+  },
+  {
+    product_id: "2",
+    name: "U2 POWER HOSE",
+    subtitle: "4 FEET",
+    description: "4 FEET",
+    image: "/images/image2.png",
+    priceNaira: 8500,
+    price_kobo: 850000,
+    bgColor: "#02133033",
+  },
+  {
+    product_id: "3",
+    name: "U2 IGNITION BATTERY",
+    subtitle: "6-PACK ENERGIZER",
+    description: "6-PACK ENERGIZER",
+    image: "/images/image4.png",
+    priceNaira: 6000,
+    price_kobo: 600000,
+    bgColor: "#9C9EEC",
+  },
+  {
+    product_id: "4",
+    name: "U2 HOSE CLAMPS",
+    subtitle: "SET OF 3",
+    description: "SET OF 3",
+    image: "/images/image3.png",
+    priceNaira: 3500,
+    price_kobo: 350000,
+    bgColor: "#B10E0E4D",
+  },
+  {
+    product_id: "5",
+    name: "U2 POWER HOSE",
+    subtitle: "6 FEET",
+    description: "6 FEET",
+    image: "/images/image2.png",
+    priceNaira: 11000,
+    price_kobo: 1100000,
+    bgColor: "#02133033",
+  },
+  {
+    product_id: "6",
+    name: "U2 GAS CYLINDER",
+    subtitle: "6KG",
+    description: "6KG",
+    image: "/images/image1.png",
+    priceNaira: 12000,
+    price_kobo: 1200000,
+    bgColor: "#E9B90D4D",
+  },
+  {
+    product_id: "7",
+    name: "U2 HOSE CLAMPS",
+    subtitle: "HEAVY DUTY",
+    description: "HEAVY DUTY",
+    image: "/images/image3.png",
+    priceNaira: 4500,
+    price_kobo: 450000,
+    bgColor: "#B10E0E4D",
+  },
+  {
+    product_id: "8",
+    name: "U2 IGNITION BATTERY",
+    subtitle: "9V ENERGIZER",
+    description: "9V ENERGIZER",
+    image: "/images/image4.png",
+    priceNaira: 4000,
+    price_kobo: 400000,
+    bgColor: "#9C9EEC",
+  },
+];
+
+export const shopItems: Product[] = products;
+export const defaultShopItems: Product[] = products;
+
+export const dummyReceiptItems: ReceiptItem[] = [
+  {
+    id: "1",
+    title: "6-pack Energizer ignition batteries",
+    image: "/shop/battery-9v.jpg",
+    priceNaira: 10000,
+    quantity: 1,
+  },
+  {
+    id: "2",
+    title: "6-pack Energizer ignition batteries",
+    image: "/shop/battery-9v.jpg",
+    priceNaira: 10000,
+    quantity: 1,
+  },
+];
+
+export const dummyReceiptData = {
+  orderId: "ORD-89421",
+  date: "17 MAR",
+  items: dummyReceiptItems,
+};
+
+export const HISTORY_MONTHS = [
+  "MARCH",
+  "APRIL",
+  "MAY",
+  "JUNE",
+  "JULY",
+] as const;
+
+export const dummyHistoryReceipts: HistoryReceipt[] = [
+  {
+    id: "hist-1",
+    orderNumber: "[reference num]",
+    date: "17 MAR",
+    month: "MARCH",
+    deliveryStatus: "DELIVERY IN PROGRESS",
+    progressStep: 3,
+    progressLabel: "In motion",
+    paymentMedium: "TRANSFER(BANK TRANS)",
+    paymentMediumAmount: 24000,
+    entryFee: "0.0",
+    entryType: "ONLINE",
+    time: "17/03/27, 08:15:34",
+    reference: "[reference num]",
+    subtotal: 24000,
+    deliveryFee: "0.0",
+    total: 24000,
+    items: [
+      {
+        id: "item-1",
+        title: "LPG",
+        subtitle: "( 200.4 L @ 1346/L )",
+        image: "/images/image1.png",
+        priceNaira: 100000,
+      },
+      {
+        id: "item-2",
+        title: "6-Pack Energizer\nignition batteries",
+        subtitle: "(2 pieces)",
+        image: "/shop/battery-9v.jpg",
+        priceNaira: 24000,
+      },
+    ],
+    qrCode: "/images/qr-code.png",
+  },
+  {
+    id: "hist-2",
+    orderNumber: "U2#82910-41413",
+    date: "17 MAR",
+    month: "MARCH",
+    deliveryStatus: "DELIVERY IN PROGRESS",
+    progressStep: 2,
+    progressLabel: "in motion",
+    customerName: "MR DAVID JOHNSON (0802...)",
+    statusOnline: "ONLINE",
+    time: "18:10 (12-03-2023)",
+    reference: "U2#82910-41413",
+    subtotal: 100000,
+    deliveryFee: "FREE",
+    total: 100000,
+    items: [
+      {
+        id: "item-3",
+        title: "LPG ( 200.4 L @1346/L )",
+        image: "/images/image1.png",
+        priceNaira: 100000,
+      },
+    ],
+    qrCode: "/images/qr-code.png",
+  },
+  {
+    id: "hist-3",
+    orderNumber: "ORD-89350",
+    date: "05 APR",
+    month: "APRIL",
+    deliveryStatus: "DELIVERED",
+    progressStep: 4,
+    progressLabel: "delivered",
+    customerName: "ALEXANDER G.",
+    statusOnline: "COMPLETED",
+    time: "14:20 (05-04-2023)",
+    reference: "U2#82910-41380",
+    subtotal: 17500,
+    deliveryFee: "FREE",
+    total: 17500,
+    items: [
+      {
+        id: "item-4",
+        title: "12.5kg Cooking Gas Refill",
+        image: "/images/image1.png",
+        priceNaira: 17500,
+      },
+    ],
+    qrCode: "/images/qr-code.png",
+  },
+];
+
