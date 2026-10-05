@@ -181,18 +181,20 @@ export default function WalkInPaymentDrawer({
                 </div>
 
                 {/* Action Button: 'Continue to Pay' OR 'PROCESSING...' */}
-                <button
-                  type="button"
-                  disabled={isProcessing}
-                  onClick={handleContinueToPay}
-                  className={`w-full py-3 rounded-full font-sans font-bold text-sm tracking-wide transition-all shadow-md flex items-center justify-center cursor-pointer ${
-                    isProcessing
-                      ? "bg-[#969AF6] text-white cursor-not-allowed opacity-95"
-                      : "bg-[#1317E8] hover:bg-[#1014cc] text-white active:scale-[0.98]"
-                  }`}
-                >
-                  {isProcessing ? "PROCESSING..." : "Continue to Pay"}
-                </button>
+                <div className="w-full flex justify-center mt-2">
+                  <button
+                    type="button"
+                    disabled={isProcessing}
+                    onClick={handleContinueToPay}
+                    className={`w-fit px-8 py-3 rounded-full font-sans font-bold text-sm tracking-wide transition-all shadow-md flex items-center justify-center cursor-pointer ${
+                      isProcessing
+                        ? "bg-[#969AF6] text-white cursor-not-allowed opacity-95"
+                        : "bg-[#1317E8] hover:bg-[#1014cc] text-white active:scale-[0.98]"
+                    }`}
+                  >
+                    {isProcessing ? "PROCESSING..." : "Continue to Pay"}
+                  </button>
+                </div>
               </motion.div>
             )}
           </motion.div>
