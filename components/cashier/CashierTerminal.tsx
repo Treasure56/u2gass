@@ -55,12 +55,14 @@ export default function CashierTerminal({
     onPaymentSuccess?.(order);
   };
 
+  const hasTyped = hasStartedTyping && displayValue !== "0KG";
+
   return (
     <div
       className={`w-full max-w-[340px] sm:max-w-[360px] mx-auto flex flex-col items-center select-none ${className}`}
     >
       {/* ──────────────── CASHIER GREY TERMINAL BODY ──────────────── */}
-      <div className="w-full bg-[#E1E1E5] rounded-[24px] pt-6 pb-7 px-8 relative shadow-[0_12px_32px_rgba(0,0,0,0.12),0_4px_12px_rgba(0,0,0,0.06),inset_0_1px_2px_rgba(255,255,255,0.85)] border border-[#C6C6CA] flex flex-col items-center overflow-hidden">
+      <div className="w-full bg-[#858587] rounded-[24px] pt-6 pb-7 px-8 relative shadow-[0_12px_32px_rgba(0,0,0,0.12),0_4px_12px_rgba(0,0,0,0.06),inset_0_1px_2px_rgba(255,255,255,0.85)]  flex flex-col items-center overflow-hidden">
         {/* Subtle speckled/noise texture overlay */}
         <div className="absolute inset-0 opacity-20 mix-blend-multiply noise-texture pointer-events-none" />
 
@@ -94,11 +96,15 @@ export default function CashierTerminal({
 
       {/* ──────────────── ACTION CONTROLS (SCAN & MANUAL PEN) ──────────────── */}
       <div className="flex items-center justify-center gap-4 mt-5">
-        {/* Lavender / Periwinkle SCAN Button */}
+        {/* SCAN Button: Switches to primary button color when user has typed an amount */}
         <button
           type="button"
           onClick={onScanClick}
-          className="py-3 px-9 rounded-full bg-[#969AF6] hover:bg-[#858AF4] text-white text-sm font-bold tracking-widest uppercase flex items-center justify-center cursor-pointer active:scale-95 transition-all shadow-sm"
+          className={`py-3 px-9 rounded-full text-white text-sm font-bold tracking-widest uppercase flex items-center justify-center cursor-pointer active:scale-95 transition-all ${
+            hasTyped
+              ? "bg-brand-primary hover:bg-brand-primary/90 shadow-[0_4px_14px_rgba(19,23,228,0.35)]"
+              : "bg-[#969AF6] hover:bg-[#858AF4] shadow-sm"
+          }`}
         >
           SCAN
         </button>
