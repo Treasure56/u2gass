@@ -75,29 +75,34 @@ export default function WalkInPaymentDrawer({
   return (
     <AnimatePresence>
       {open && (
-        <div className="fixed inset-0 z-40 flex items-end justify-center pointer-events-auto">
-          {/* Backdrop */}
+        <>
+          {/* Backdrop inside the terminal container */}
           <motion.div
+            key="walkin-backdrop"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             transition={{ duration: 0.2 }}
             onClick={handleClose}
-            className="absolute inset-0 bg-black/20 backdrop-blur-[1px]"
+            className="absolute inset-0 z-20 bg-black/20 backdrop-blur-[1px] cursor-pointer"
           />
 
-          {/* Bottom Card / Drawer Container */}
+          {/* Bottom Card / Drawer Container popping up inside the terminal */}
           <motion.div
-            initial={{ y: "100%", opacity: 0.8 }}
+            key="walkin-sheet"
+            initial={{ y: "100%", opacity: 0 }}
             animate={{ y: 0, opacity: 1 }}
             exit={{ y: "100%", opacity: 0 }}
-            transition={{ type: "spring", damping: 28, stiffness: 320 }}
-            className="relative z-50 w-full max-w-[340px] sm:max-w-[370px] bg-white rounded-t-[32px] rounded-b-[24px] shadow-[0_-12px_40px_rgba(0,0,0,0.15),0_4px_20px_rgba(0,0,0,0.08)] border border-black/5 px-6 pt-3 pb-6 mb-4 flex flex-col items-center select-none"
+            transition={{ type: "spring", damping: 26, stiffness: 280 }}
+            onClick={(e) => e.stopPropagation()}
+            className="absolute bottom-0 inset-x-0 z-30 w-full bg-white rounded-t-[36px] shadow-[0_-8px_32px_rgba(0,0,0,0.22)] border-t border-black/5 px-5 pt-3 pb-6 flex flex-col items-center select-none"
           >
             {/* Top Drag Handle Indicator */}
-            <div
+            <button
+              type="button"
               onClick={handleClose}
-              className="w-10 h-1.25 bg-[#D1D5DB] rounded-full mx-auto mb-4 cursor-pointer hover:bg-neutral-400 transition-colors"
+              aria-label="Close"
+              className="w-11 h-1 bg-[#8E8E93] rounded-full mx-auto mb-3 cursor-pointer hover:bg-neutral-600 transition-colors"
             />
 
             {!selectedMethod ? (
@@ -110,22 +115,22 @@ export default function WalkInPaymentDrawer({
                 className="w-full flex flex-col items-center"
               >
                 {/* Weight Header */}
-                <h2 className="font-mono text-4xl sm:text-5xl font-black text-black tracking-tight leading-none mb-1">
+                <h2 className="font-mono text-3xl sm:text-4xl font-black text-black tracking-tight leading-none mb-1">
                   {kg}kg
                 </h2>
 
                 {/* Amount Pill Badge */}
-                <div className="bg-[#1317E8] text-white text-[11px] font-mono font-bold px-2.5 py-0.5 rounded-full shadow-sm mb-3">
+                <div className="bg-[#1317E8] text-white text-[11px] font-mono font-bold px-2.5 py-0.5 rounded-full shadow-xs mb-2">
                   {formattedPrice}
                 </div>
 
                 {/* 'via:' label */}
-                <span className="text-[12px] text-neutral-400 font-sans tracking-wide mb-3">
+                <span className="text-[11px] text-neutral-400 font-sans tracking-wide mb-2.5">
                   via:
                 </span>
 
                 {/* Payment Option Stickers */}
-                <div className="flex items-center justify-center gap-4 w-full py-1">
+                <div className="flex items-center justify-center gap-3 w-full py-1">
                   <PaymentMethodBadge
                     method="CASH"
                     onClick={() => handleSelectMethod("CASH")}
@@ -150,13 +155,13 @@ export default function WalkInPaymentDrawer({
                 className="w-full flex flex-col"
               >
                 {/* Top Row: Left (10kg & Price badge) / Right (via & Method sticker) */}
-                <div className="flex items-center justify-between w-full px-2 mb-6">
+                <div className="flex items-center justify-between w-full px-2 mb-5">
                   {/* Left Column */}
                   <div className="flex flex-col items-start">
-                    <h2 className="font-mono text-4xl sm:text-[44px] font-black text-black tracking-tight leading-none mb-1.5">
+                    <h2 className="font-mono text-3xl sm:text-4xl font-black text-black tracking-tight leading-none mb-1">
                       {kg}kg
                     </h2>
-                    <div className="bg-[#1317E8] text-white text-[11px] font-mono font-bold px-2.5 py-0.5 rounded-full shadow-sm">
+                    <div className="bg-[#1317E8] text-white text-[11px] font-mono font-bold px-2.5 py-0.5 rounded-full shadow-xs">
                       {formattedPrice}
                     </div>
                   </div>
@@ -180,7 +185,7 @@ export default function WalkInPaymentDrawer({
                   type="button"
                   disabled={isProcessing}
                   onClick={handleContinueToPay}
-                  className={`w-full py-3.5 rounded-full font-sans font-bold text-base tracking-wide transition-all shadow-md flex items-center justify-center cursor-pointer ${
+                  className={`w-full py-3 rounded-full font-sans font-bold text-sm tracking-wide transition-all shadow-md flex items-center justify-center cursor-pointer ${
                     isProcessing
                       ? "bg-[#969AF6] text-white cursor-not-allowed opacity-95"
                       : "bg-[#1317E8] hover:bg-[#1014cc] text-white active:scale-[0.98]"
@@ -191,7 +196,7 @@ export default function WalkInPaymentDrawer({
               </motion.div>
             )}
           </motion.div>
-        </div>
+        </>
       )}
     </AnimatePresence>
   );

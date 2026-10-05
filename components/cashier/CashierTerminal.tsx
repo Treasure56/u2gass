@@ -81,6 +81,15 @@ export default function CashierTerminal({
 
         {/* Keypad Grid (3 x 4) */}
         <TerminalKeyboard onKeyPress={handleKeyPress} className="mb-2 z-10" />
+
+        {/* ──────────────── WALK-IN PAYMENT DRAWER (POPS UP INSIDE TERMINAL) ──────────────── */}
+        <WalkInPaymentDrawer
+          open={drawerOpen}
+          onOpenChange={setDrawerOpen}
+          kg={parsedKg}
+          ratePerKg={ratePerKg}
+          onSuccess={handleOrderSuccess}
+        />
       </div>
 
       {/* ──────────────── ACTION CONTROLS (SCAN & MANUAL PEN) ──────────────── */}
@@ -111,15 +120,6 @@ export default function CashierTerminal({
           />
         </button>
       </div>
-
-      {/* ──────────────── WALK-IN PAYMENT DRAWER (SLIDES UP ON 'PAY') ──────────────── */}
-      <WalkInPaymentDrawer
-        open={drawerOpen}
-        onOpenChange={setDrawerOpen}
-        kg={parsedKg}
-        ratePerKg={ratePerKg}
-        onSuccess={handleOrderSuccess}
-      />
     </div>
   );
 }
