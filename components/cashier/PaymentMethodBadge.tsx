@@ -33,11 +33,8 @@ export default function PaymentMethodBadge({
       type="button"
       onClick={onClick}
       className={cn(
-        "w-18.75 h-17.25 rounded-[18px] border border-dashed bg-white flex items-center justify-center font-medium text-[24px] leading-[1.05] text-black text-center whitespace-pre-line transition-all active:scale-95 cursor-pointer select-none",
+        "w-18.75 h-17.25 rounded-[18px] border border-dashed border-[#D1D5DB] bg-white flex items-center justify-center font-medium text-[24px] leading-[1.05] text-black text-center whitespace-pre-line shadow-[0_8px_20px_rgba(0,0,0,0.08)] transition-all active:scale-95 cursor-pointer select-none",
         defaultRotation,
-        selected
-          ? "border-black shadow-[0_8px_24px_rgba(0,0,0,0.18)] scale-105 ring-2 ring-brand-primary/30"
-          : "border-[#D1D5DB] shadow-[0_8px_20px_rgba(0,0,0,0.08)] hover:border-brand-primary hover:text-brand-primary",
         className,
       )}
     >
