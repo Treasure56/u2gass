@@ -34,12 +34,23 @@ export default function GasTerminal({
   children,
 }: GasTerminalProps) {
   const [displayValue, setDisplayValue] = useState<string>(initialValue);
+  const [hasStartedTyping, setHasStartedTyping] = useState<boolean>(false);
   const isLoggedIn = useAuthStore((state) => state.isLoggedIn);
   const user = useAuthStore((state) => state.user);
 
-  // Close success/failed status on click anywhere outside or on Escape key
+  useEffect(() => {
+    setDisplayValue(initialValue);
+    setHasStartedTyping(false);
+  }, [initialValue]);
+
+  // Close success/failed status on click anywhere outside or on Escape key & lock background scroll
   useEffect(() => {
     if (status !== "success" && status !== "failed") return;
+
+    const originalBodyOverflow = document.body.style.overflow;
+    const originalHtmlOverflow = document.documentElement.style.overflow;
+    document.body.style.overflow = "hidden";
+    document.documentElement.style.overflow = "hidden";
 
     const handleGlobalClick = () => {
       onDismissStatus?.();
@@ -58,6 +69,8 @@ export default function GasTerminal({
     }, 50);
 
     return () => {
+      document.body.style.overflow = originalBodyOverflow;
+      document.documentElement.style.overflow = originalHtmlOverflow;
       clearTimeout(timer);
       window.removeEventListener("click", handleGlobalClick);
       window.removeEventListener("touchstart", handleGlobalClick);
@@ -89,11 +102,14 @@ export default function GasTerminal({
     }
 
     if (key === "x" || key === "X" || key === "×") {
+      setHasStartedTyping(true);
       updateDisplay(deleteKeypadDigit(displayValue));
       return;
     }
 
-    updateDisplay(appendKeypadDigit(displayValue, key, initialValue));
+    const isFirst = !hasStartedTyping;
+    setHasStartedTyping(true);
+    updateDisplay(appendKeypadDigit(displayValue, key, isFirst));
   };
 
   const rateTickerText = `Today's Rate: 1kg : ₦${effectiveRateNaira.toLocaleString()} • `;
@@ -110,7 +126,6 @@ export default function GasTerminal({
         onNotificationClick={onNotificationClick}
         className="mb-4 px-2"
       />
-
 
       <div className="w-full relative flex flex-col items-center select-none">
         <div className="relative z-0 flex items-center justify-center -mb-1 overflow-hidden w-81.5 h-22.75">
@@ -131,8 +146,8 @@ export default function GasTerminal({
           </div>
         </div>
 
-        <div className="w-full bg-brand-primary rounded-[30px] pt-7 pb-6 px-10 relative shadow-[0_12px_36px_rgba(19,23,228,0.35),0_4px_12px_rgba(0,0,0,0.18)] flex flex-col items-center overflow-hidden">
-          <div className="absolute inset-2 rounded-[22px] border border-black/30 pointer-events-none z-10" />
+        <div className="w-full bg-brand-primary rounded-[16px] pt-7 pb-6 px-10 relative shadow-[0_12px_36px_rgba(19,23,228,0.35),0_4px_12px_rgba(0,0,0,0.18)] flex flex-col items-center overflow-hidden">
+          <div className="absolute inset-2 rounded-[8px] border border-black/30 pointer-events-none z-10" />
           <div className="text-xl tracking-wider text-light-gray uppercase mb-2.5 z-10">
             AMOUNT IN NAIRA
           </div>
@@ -152,65 +167,65 @@ export default function GasTerminal({
           {children}
         </div>
 
-        {/* Transparent overlay on top of the terminal for Success / Failed */}
+        {/* Full-page blur overlay for Success / Failed */}
         <AnimatePresence>
           {(status === "success" || status === "failed") && (
             <motion.div
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
-              transition={{ duration: 0.2 }}
+              transition={{ duration: 0.25 }}
               onClick={onDismissStatus}
-              className="absolute inset-0 z-30 rounded-[30px] bg-black/20 backdrop-blur-[3px] flex flex-col items-center justify-between pt-10 pb-4 select-none cursor-pointer overflow-hidden"
+              className="fixed inset-0 z-50 bg-black/20 backdrop-blur-md flex flex-col items-center justify-center p-4 select-none cursor-pointer overflow-hidden touch-none overscroll-none"
             >
-              {/* Hand with Zoom-in Animation and 266/354 aspect ratio */}
-              <motion.div
-                key={`terminal-hand-${status}`}
-                initial={{ scale: 0.15, opacity: 0.3 }}
-                animate={{ scale: 2, opacity: 1 }}
-                transition={{
-                  type: "tween",
-                  duration: 0.9,
-                }}
-                className="relative w-66.5 h-88.5 max-w-full aspect-266/354 flex items-center justify-center -mb-6"
-              >
-                <motion.img
-                  src={
-                    status === "success"
-                      ? "/images/success.png"
-                      : "/images/failed.png"
-                  }
-                  alt={status === "success" ? "Success" : "Failed"}
-                  // fill
-                  // priority
-                  className="object-contain drop-shadow-[0_16px_32px_rgba(0,0,0,0.45)] pointer-events-none"
-                />
-              </motion.div>
+              <div className="w-full max-w-[380px] flex flex-col items-center justify-center relative">
+                {/* Hand with Zoom-in Animation and 266/354 aspect ratio */}
+                <motion.div
+                  key={`terminal-hand-${status}`}
+                  initial={{ scale: 0.15, opacity: 0.3 }}
+                  animate={{ scale: 2, opacity: 1 }}
+                  transition={{
+                    type: "tween",
+                    duration: 0.9,
+                  }}
+                  className="relative w-66.5 h-88.5 max-w-full aspect-266/354 flex items-center justify-center mb-4"
+                >
+                  <motion.img
+                    src={
+                      status === "success"
+                        ? "/images/success.png"
+                        : "/images/failed.png"
+                    }
+                    alt={status === "success" ? "Success" : "Failed"}
+                    className="object-contain drop-shadow-[0_16px_32px_rgba(0,0,0,0.45)] pointer-events-none"
+                  />
+                </motion.div>
 
-              {/* Reusable TerminalScreenBox at bottom */}
-              <motion.div
-                key={`terminal-box-${status}`}
-                initial={{ scale: 0.7, opacity: 0, y: 15 }}
-                animate={{ scale: 1, opacity: 1, y: 0 }}
-                transition={{
-                  type: "spring",
-                  stiffness: 280,
-                  damping: 20,
-                  delay: 0.1,
-                }}
-                className="relative z-40"
-              >
-                <TerminalScreenBox
-                  value={status === "success" ? "SUCCESS!!" : "FAILED!!"}
-                  variant={status === "success" ? "green" : "red"}
-                  speed={8}
-                  className={
-                    status === "success"
-                      ? "shadow-[0_4px_24px_rgba(3,255,49,0.5)]"
-                      : "shadow-[0_4px_24px_rgba(255,3,3,0.45)]"
-                  }
-                />
-              </motion.div>
+                {/* Reusable TerminalScreenBox at bottom */}
+                <motion.div
+                  key={`terminal-box-${status}`}
+                  initial={{ scale: 0.7, opacity: 0, y: 15 }}
+                  animate={{ scale: 1, opacity: 1, y: 0 }}
+                  transition={{
+                    type: "spring",
+                    stiffness: 280,
+                    damping: 20,
+                    delay: 0.1,
+                  }}
+                  className="relative z-40 w-full flex justify-center"
+                >
+                  <TerminalScreenBox
+                    value={status === "success" ? "SUCCESS!!" : "FAILED!!"}
+                    variant={status === "success" ? "green" : "red"}
+                    speed={8}
+                    className={
+                      status === "success"
+                        ? "shadow-[0_4px_24px_rgba(3,255,49,0.5)]"
+                        : "shadow-[0_4px_24px_rgba(255,3,3,0.45)]"
+                    }
+                  />
+                </motion.div>
+              </div>
             </motion.div>
           )}
         </AnimatePresence>
@@ -221,14 +236,14 @@ export default function GasTerminal({
 
 function TickerItem({ rate }: { rate: number }) {
   return (
-    <span className="inline-flex items-center text-[54px] leading-none font-bold tracking-wider px-4 select-none text-[#FF2222] whitespace-nowrap drop-shadow-[0_0_14px_rgba(255,30,30,0.9)] drop-shadow-[0_0_4px_#FF2222]">
+    <span className="inline-flex items-center text-[54px] leading-none font-bold tracking-wider px-4 select-none text-[#FF2222] whitespace-nowrap drop-shadow-[0_0_14px_rgba(255,30,30,0.9)]">
       <span>Today&apos;s Rate: 1kg :&nbsp;</span>
       <span className="relative inline-flex items-center justify-center mr-0.5">
         <span>N</span>
-        <span className="absolute inset-x-0 top-[37%] h-1 bg-[#FF2222] pointer-events-none drop-shadow-[0_0_6px_rgba(255,30,30,0.9)]" />
-        <span className="absolute inset-x-0 top-[60%] h-1 bg-[#FF2222] pointer-events-none drop-shadow-[0_0_6px_rgba(255,30,30,0.9)]" />
+        {/* <span className="absolute inset-x-0 top-[37%] h-1 bg-[#FF2222] pointer-events-none drop-shadow-[0_0_6px_rgba(255,30,30,0.9)]" />
+        <span className="absolute inset-x-0 top-[60%] h-1 bg-[#FF2222] pointer-events-none drop-shadow-[0_0_6px_rgba(255,30,30,0.9)]" /> */}
       </span>
-      <span>{rate.toLocaleString()} •&nbsp;</span>
+      <span>{rate.toLocaleString()}</span>
     </span>
   );
 }

@@ -41,10 +41,10 @@ export function HistoryModal({
         </button>
       }
       scrollable={false}
-      className="w-full max-w-[420px] h-[90vh] max-h-[850px] px-6 pb-8"
+      className="w-full max-w-[420px] px-6 pb-8"
     >
       {/* Month Filter Tabs (Flexbox) */}
-      <div className="flex items-center gap-4 overflow-x-auto no-scrollbar py-1 mb-3 shrink-0">
+      <div className="flex items-center gap-4 overflow-x-auto no-scrollbar py-1 mb-3 shrink-0 touch-pan-x">
         {HISTORY_MONTHS.map((month) => {
           const isActive = month === selectedMonth;
           const hasReceipts = receipts.some(
@@ -72,7 +72,7 @@ export function HistoryModal({
       </div>
 
       {/* Horizontal Receipts Slider (Flexbox) */}
-      <div className="w-full flex-1 overflow-x-auto overflow-y-hidden no-scrollbar py-1 flex items-start">
+      <div className="w-full flex-1 overflow-x-auto overflow-y-hidden no-scrollbar py-1 flex items-start touch-pan-x">
         {filteredReceipts.length > 0 ? (
           <div className="flex gap-5 items-start snap-x snap-mandatory px-1 pt-1 pb-4">
             {filteredReceipts.map((receipt) => (

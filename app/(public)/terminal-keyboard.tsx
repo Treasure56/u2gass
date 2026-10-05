@@ -1,5 +1,7 @@
 "use client";
 
+import { cn } from "@/lib/utils";
+
 export const KEYPAD_ROWS = [
   ["1", "2", "3"],
   ["4", "5", "6"],
@@ -26,16 +28,21 @@ export function TerminalKey({
   className = "",
 }: TerminalKeyProps) {
   const isPay = label === "PAY";
-  const isCross = label === "x" || label === "X" || label === "×";
 
   return (
     <button
       type="button"
       disabled={disabled}
       onClick={onClick}
-      className={`w-12.25 h-9.75 rounded-lg bg-[#222222] text-[#e3e3e3] border border-[#141414] border-t-[#606060]/60 shadow-[inset_0_1px_1px_rgba(255,255,255,0.22),0_3px_6px_rgba(0,0,0,0.65)]  ${className}`}
+      className={cn(
+        "bg-[#222222] text-[#e3e3e3] border border-[#141414] border-t-[#606060]/60 shadow-[inset_0_1px_1px_rgba(255,255,255,0.22),0_3px_6px_rgba(0,0,0,0.65)] flex items-center justify-center relative active:translate-y-0.5 transition-transform text-[32px] leading-none",
+        isPay
+          ? "rounded-lg py-[2.5px] px-2 w-max justify-self-end whitespace-nowrap"
+          : "w-12.25 h-9.75 rounded-lg",
+        className,
+      )}
     >
-      <div className="absolute inset-0 opacity-25  pointer-events-none" />
+      <div className="absolute inset-0 opacity-25 pointer-events-none" />
       <span className="-translate-y-px relative z-10">{label}</span>
     </button>
   );
@@ -70,3 +77,6 @@ export function TerminalKeyboard({
     </div>
   );
 }
+
+export default TerminalKey;
+

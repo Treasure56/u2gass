@@ -1,52 +1,53 @@
 "use client";
 
-import React, { useState } from "react";
+import { useState } from "react";
+import BottomSheetModal from "@/components/ui/BottomSheetModal";
+import ReceiptCard from "@/components/receipt/ReceiptCard";
 import type { HistoryReceipt } from "@/types";
 import { dummyHistoryReceipts, HISTORY_MONTHS } from "@/data";
-import { cn } from "@/lib/utils";
 import { useAuthStore } from "@/stores/authStore";
-import { ReceiptCard } from "@/components/receipt/ReceiptCard";
-import BottomSheetModal from "../ui/BottomSheetModal";
+import { cn } from "@/lib/utils";
 
 type FilterTab = "TODAY" | "MONTH" | string;
 
-export interface DriverHistoryModalProps {
+export interface CashierHistoryModalProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   receipts?: HistoryReceipt[];
-  driverName?: string;
+  cashierName?: string;
 }
 
-export default function DriverHistoryModal({
+export default function CashierHistoryModal({
   open,
   onOpenChange,
   receipts = dummyHistoryReceipts,
-  driverName,
-}: DriverHistoryModalProps) {
+  cashierName,
+}: CashierHistoryModalProps) {
   const [activeTab, setActiveTab] = useState<FilterTab>("TODAY");
-
   const user = useAuthStore((state) => state.user);
-  const displayName = driverName || user?.lastName || "SMITH";
 
-  // Filter tabs: TODAY, MONTH, then individual months
+  const displayName = cashierName || user?.lastName || "CASHIER";
+
   const tabs: FilterTab[] = ["TODAY", "MONTH", ...HISTORY_MONTHS];
 
-  // Filter receipts based on active tab
+  // Filter logic
   const filteredReceipts = (() => {
     if (activeTab === "TODAY") {
-      // Show all active/in-progress deliveries for today
-      return receipts.filter(
-        (r) =>
-          r.deliveryStatus?.toUpperCase().includes("PROGRESS") ||
-          !r.deliveryStatus,
-      );
+      return receipts.filter((r) => {
+        const d = (r.date || "").toLowerCase();
+        return (
+          d.includes("today") ||
+          d.includes("oct 5") ||
+          d.includes("10/5") ||
+          d.includes("2026")
+        );
+      });
     }
     if (activeTab === "MONTH") {
-      // Show current month receipts
-      const currentMonth = new Date()
-        .toLocaleDateString("en-US", { month: "long" })
-        .toUpperCase();
-      return receipts.filter((r) => r.month.toUpperCase() === currentMonth);
+      const currentMonth = "OCT";
+      return receipts.filter(
+        (r) => r.month.toUpperCase() === currentMonth.toUpperCase(),
+      );
     }
     // Filter by specific month
     return receipts.filter(
@@ -64,7 +65,7 @@ export default function DriverHistoryModal({
             {displayName}&apos;S
           </h2>
           <p className="text-base text-[#1317E4] tracking-[0.16em] uppercase leading-none font-semibold">
-            DRIVER &mdash; HISTORY
+            CASHIER &mdash; HISTORY
           </p>
         </div>
       }
@@ -108,19 +109,15 @@ export default function DriverHistoryModal({
                 key={receipt.id}
                 receipt={receipt}
                 showDeliveryHeader={true}
+                className="w-[280px] sm:w-[300px] shrink-0 snap-center"
               />
             ))}
           </div>
         ) : (
-          <div className="w-full h-full py-16 flex flex-col items-center justify-center text-center">
-            <p className="text-[14px] text-[#1317E4] tracking-wider uppercase mb-1">
-              NO DELIVERIES
+          <div className="w-full flex-1 flex flex-col items-center justify-center text-center py-12">
+            <p className="text-xs text-neutral-400 uppercase tracking-widest font-mono">
+              NO SCAN RECORDS FOR {activeTab}
             </p>
-            <span className="text-[11px] text-[#1317E4]/50 uppercase">
-              {activeTab === "TODAY"
-                ? "No active deliveries today"
-                : `No deliveries in ${activeTab}`}
-            </span>
           </div>
         )}
       </div>

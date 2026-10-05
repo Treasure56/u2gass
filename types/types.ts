@@ -104,6 +104,7 @@ export interface Product {
   bgColor?: string;
   priceNaira?: number;
   unavailable?: boolean;
+  sizeScale?: number;
 }
 
 export interface BundleMember extends Product {

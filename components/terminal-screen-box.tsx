@@ -40,16 +40,16 @@ export default function TerminalScreenBox({
   return (
     <div
       className={cn(
-        "w-44 h-14.5 bg-[#1a1a1a] rounded-[8px] p-1.25 border border-[#0a0a0a] shadow-[inset_0_1px_1px_rgba(255,255,255,0.12),0_2px_5px_rgba(0,0,0,0.5)] flex items-center justify-center",
-        className
+        "w-44 h-14.5 bg-[#1a1a1a] rounded-lg p-1.25 border border-[#0a0a0a] shadow-[inset_0_1px_1px_rgba(255,255,255,0.12),0_2px_5px_rgba(0,0,0,0.5)] flex items-center justify-center",
+        className,
       )}
     >
       <div
         className={cn(
-          "w-full h-full rounded-lg border shadow-[inset_0_2px_6px_rgba(0,0,0,0.95)] flex items-center justify-center relative overflow-hidden",
+          "w-full h-full rounded-[6px] border shadow-[inset_0_2px_6px_rgba(0,0,0,0.95)] flex items-center justify-center relative overflow-hidden",
           isGreen
             ? "bg-[#050b05] border-[#030803]"
-            : "bg-[#140808] border-[#0a0808]"
+            : "bg-[#140808] border-[#0a0808]",
         )}
       >
         {/* Screen Glass Glare */}
@@ -74,7 +74,7 @@ export default function TerminalScreenBox({
                       isGreen
                         ? "text-[#00FF44] drop-shadow-[0_0_12px_rgba(0,255,68,0.95)] drop-shadow-[0_0_4px_#00FF44]"
                         : "text-[#FF1B1B] drop-shadow-[0_0_12px_rgba(255,27,27,0.95)] drop-shadow-[0_0_4px_#FF1B1B]",
-                      textClassName
+                      textClassName,
                     )}
                   >
                     {text}
@@ -91,7 +91,7 @@ export default function TerminalScreenBox({
               isGreen
                 ? "text-[#00FF44] drop-shadow-[0_0_12px_rgba(0,255,68,0.95)] drop-shadow-[0_0_4px_#00FF44]"
                 : "text-[#FF1B1B] drop-shadow-[0_0_12px_rgba(255,27,27,0.95)] drop-shadow-[0_0_4px_#FF1B1B]",
-              textClassName
+              textClassName,
             )}
           >
             {value}

@@ -36,7 +36,7 @@ export function Navbar({
   const isLoggedIn = useAuthStore((state) => state.isLoggedIn);
   const user = useAuthStore((state) => state.user);
 
-  const shouldShowProfile = showProfile && isLoggedIn;
+  const shouldShowProfile = showProfile;
 
   return (
     <nav

@@ -22,7 +22,8 @@ export function ReceiptCard({
   onKeep,
   showActions = false,
 }: ReceiptCardProps) {
-  const hasDeliveryHeader = showDeliveryHeader && Boolean(receipt.deliveryStatus);
+  const hasDeliveryHeader =
+    showDeliveryHeader && Boolean(receipt.deliveryStatus);
   const progressStep = receipt.progressStep ?? 3;
   const progressLabel = receipt.progressLabel ?? "In motion";
 
@@ -30,7 +31,7 @@ export function ReceiptCard({
     <div
       className={cn(
         "w-[260px] sm:w-[280px] shrink-0 snap-center flex flex-col select-none filter drop-shadow-[0_8px_20px_rgba(0,0,0,0.06)]",
-        className
+        className,
       )}
     >
       {/* ── Top Blue Delivery Box (Floating rectangular banner with gap below) ── */}
@@ -47,7 +48,7 @@ export function ReceiptCard({
                 key={step}
                 className={cn(
                   "h-[4px] rounded-full flex-1 transition-all",
-                  step <= progressStep ? "bg-white" : "bg-[#4552f8]"
+                  step <= progressStep ? "bg-white" : "bg-[#4552f8]",
                 )}
               />
             ))}
@@ -190,19 +191,16 @@ export function ReceiptCard({
       </div>
 
       {/* ── Sawtooth / Zigzag bottom tear-off edge ── */}
-      <div className="w-full overflow-hidden leading-none filter drop-shadow-[0_4px_6px_rgba(0,0,0,0.03)]">
+      <div className="w-full overflow-hidden leading-none filter drop-shadow-[0_4px_6px_rgba(0,0,0,0.03)] -mt-px">
         <svg
           viewBox="0 0 280 12"
-          className="w-full h-2.5 text-white fill-current block"
+          className="w-full h-2.5 block text-white fill-white"
           preserveAspectRatio="none"
+          xmlns="http://www.w3.org/2000/svg"
         >
           <polygon
-            points="
-              0,0 7,12 14,0 21,12 28,0 35,12 42,0 49,12 56,0 63,12 70,0
-              77,12 84,0 91,12 98,0 105,12 112,0 119,12 126,0 133,12 140,0
-              147,12 154,0 161,12 168,0 175,12 182,0 189,12 196,0 203,12 210,0
-              217,12 224,0 231,12 238,0 245,12 252,0 259,12 266,0 273,12 280,0
-            "
+            points="0,0 7,12 14,0 21,12 28,0 35,12 42,0 49,12 56,0 63,12 70,0 77,12 84,0 91,12 98,0 105,12 112,0 119,12 126,0 133,12 140,0 147,12 154,0 161,12 168,0 175,12 182,0 189,12 196,0 203,12 210,0 217,12 224,0 231,12 238,0 245,12 252,0 259,12 266,0 273,12 280,0"
+            fill="#FFFFFF"
           />
         </svg>
       </div>

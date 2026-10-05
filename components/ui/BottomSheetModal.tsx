@@ -1,7 +1,12 @@
 "use client";
 
 import React, { useEffect } from "react";
-import { motion, AnimatePresence } from "framer-motion";
+import {
+  Drawer,
+  DrawerContent,
+  DrawerTitle,
+  DrawerDescription,
+} from "@/components/ui/drawer";
 import { cn } from "@/lib/utils";
 
 export interface BottomSheetModalProps {
@@ -44,7 +49,6 @@ export interface BottomSheetModalProps {
 
   /**
    * Additional classes for the sliding sheet container.
-   * Default includes: `w-full max-w-[430px] sm:max-w-[450px] h-[92vh] max-h-[880px] bg-white rounded-t-[36px] pt-3 pb-6 px-4 sm:px-6 shadow-2xl flex flex-col relative overflow-hidden`
    */
   className?: string;
 
@@ -57,6 +61,16 @@ export interface BottomSheetModalProps {
    * Additional classes for the backdrop wrapper.
    */
   backdropClassName?: string;
+
+  /**
+   * Snap points for shadcn drawer (e.g. [0.48, 0.92]).
+   */
+  snapPoints?: (number | string)[];
+
+  /**
+   * Default initial snap point.
+   */
+  defaultSnapPoint?: number | string;
 }
 
 export function BottomSheetModal({
@@ -72,94 +86,83 @@ export function BottomSheetModal({
   className,
   contentClassName,
   backdropClassName,
+  snapPoints = [0.45, 0.78],
+  defaultSnapPoint = 0.78,
 }: BottomSheetModalProps) {
-  // Close on Escape key
+  // Lock background scroll when open
   useEffect(() => {
     if (!open) return;
-    const handleKeyDown = (e: KeyboardEvent) => {
-      if (e.key === "Escape") {
-        onOpenChange(false);
-      }
+
+    const originalBodyOverflow = document.body.style.overflow;
+    const originalHtmlOverflow = document.documentElement.style.overflow;
+    document.body.style.overflow = "hidden";
+    document.documentElement.style.overflow = "hidden";
+
+    return () => {
+      document.body.style.overflow = originalBodyOverflow;
+      document.documentElement.style.overflow = originalHtmlOverflow;
     };
-    window.addEventListener("keydown", handleKeyDown);
-    return () => window.removeEventListener("keydown", handleKeyDown);
-  }, [open, onOpenChange]);
+  }, [open]);
 
   return (
-    <AnimatePresence>
-      {open && (
-        <motion.div
-          key="bottom-sheet-backdrop"
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          exit={{ opacity: 0 }}
-          transition={{ duration: 0.2 }}
-          onClick={() => onOpenChange(false)}
-          className={cn(
-            "fixed inset-0 z-50 bg-black/60 backdrop-blur-xs flex flex-col justify-end sm:justify-center items-center p-0 sm:p-4 select-none",
-            backdropClassName,
-          )}
-        >
-          {/* Main Sliding Sheet */}
-          <motion.div
-            key="bottom-sheet-panel"
-            initial={{ y: "100%", opacity: 0.6 }}
-            animate={{ y: 0, opacity: 1 }}
-            exit={{ y: "100%", opacity: 0 }}
-            transition={{ type: "spring", stiffness: 320, damping: 30 }}
-            onClick={(e) => e.stopPropagation()}
+    <Drawer
+      open={open}
+      onOpenChange={(nextOpen) => onOpenChange(nextOpen)}
+      snapPoints={snapPoints}
+      defaultSnapPoint={defaultSnapPoint}
+    >
+      <DrawerContent
+        className={cn(
+          "w-full max-w-[430px] sm:max-w-[450px] mx-auto bg-white rounded-t-[36px] pt-2 pb-6 px-4 sm:px-6 shadow-2xl flex flex-col relative border-none outline-none",
+          className
+        )}
+      >
+        <DrawerDescription className="sr-only">
+          Bottom drawer dialog
+        </DrawerDescription>
+
+        {/* Top Pull Handle */}
+        {!hideHandle && (
+          <div className="w-full flex justify-center py-2 -mt-1 cursor-grab active:cursor-grabbing touch-none select-none">
+            <div className="w-12 h-1 bg-[#D1D5DB] rounded-full hover:bg-neutral-400 transition-colors" />
+          </div>
+        )}
+
+        {/* Header Area */}
+        {!hideHeader && (
+          <div className="shrink-0 mb-3 select-none">
+            {customHeader ? (
+              customHeader
+            ) : (
+              <div className="flex items-start justify-between">
+                {title && (
+                  <DrawerTitle className="text-[28px] sm:text-[32px] text-[#1317E4] tracking-wider uppercase font-bold text-left leading-[1.05]">
+                    {title}
+                  </DrawerTitle>
+                )}
+                {headerAction && (
+                  <div className="shrink-0 mt-1">{headerAction}</div>
+                )}
+              </div>
+            )}
+          </div>
+        )}
+
+        {/* Content Area */}
+        {scrollable ? (
+          <div
             className={cn(
-              "w-full max-w-[430px] sm:max-w-[450px] h-[92vh] max-h-[880px] bg-white rounded-t-[36px] pt-3 pb-6 px-4 sm:px-6 shadow-2xl flex flex-col relative overflow-hidden",
-              className,
+              "flex-1 overflow-y-auto no-scrollbar flex flex-col items-center w-full pt-1 pb-6",
+              contentClassName
             )}
           >
-            {/* Top Pull Handle */}
-            {!hideHandle && (
-              <button
-                type="button"
-                onClick={() => onOpenChange(false)}
-                aria-label="Close"
-                className="w-12 h-1 bg-[#D1D5DB] rounded-full mx-auto mb-3 shrink-0 hover:bg-neutral-400 transition-colors cursor-pointer"
-              />
-            )}
-
-            {/* Header Area */}
-            {!hideHeader && (
-              <div className="shrink-0 mb-3">
-                {customHeader ? (
-                  customHeader
-                ) : (
-                  <div className="flex items-start justify-between">
-                    {title && (
-                      <h2 className="text-[28px] sm:text-[32px] text-[#1317E4] tracking-wider uppercase font-bold text-left leading-[1.05]">
-                        {title}
-                      </h2>
-                    )}
-                    {headerAction && (
-                      <div className="shrink-0 mt-1">{headerAction}</div>
-                    )}
-                  </div>
-                )}
-              </div>
-            )}
-
-            {/* Content Area */}
-            {scrollable ? (
-              <div
-                className={cn(
-                  "flex-1 overflow-y-auto no-scrollbar flex flex-col items-center w-full pt-1 pb-6",
-                  contentClassName,
-                )}
-              >
-                {children}
-              </div>
-            ) : (
-              children
-            )}
-          </motion.div>
-        </motion.div>
-      )}
-    </AnimatePresence>
+            {children}
+          </div>
+        ) : (
+          children
+        )}
+      </DrawerContent>
+    </Drawer>
   );
 }
 

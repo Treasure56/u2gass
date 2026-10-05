@@ -176,3 +176,12 @@
 .animate-slide-up {
   animation: slide-up 0.3s ease-out;
 }
+
+@utility no-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+  &::-webkit-scrollbar {
+    display: none;
+  }
+}
+

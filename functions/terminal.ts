@@ -55,20 +55,13 @@ export function deleteKeypadDigit(currentValue: string): string {
 export function appendKeypadDigit(
   currentValue: string,
   digit: string,
-  initialValue: string = "1KG"
+  isFirstTyping: boolean = false
 ): string {
   if (!/^[0-9]$/.test(digit)) return currentValue;
 
   const currentDigits = currentValue.replace(/[^0-9]/g, "");
 
-  const isFreshTyping =
-    currentDigits === "0" ||
-    (currentDigits === "1" &&
-      currentValue === "1KG" &&
-      initialValue === "1KG" &&
-      !currentValue.includes("user_typed"));
-
-  if (isFreshTyping) {
+  if (isFirstTyping || currentDigits === "0") {
     return `${digit}KG`;
   }
 
@@ -78,3 +71,4 @@ export function appendKeypadDigit(
 
   return `${currentDigits}${digit}KG`;
 }
+

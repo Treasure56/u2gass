@@ -45,6 +45,38 @@ export function ReceiptModal({
     }
   };
 
+  // Lock background scroll when receipt modal is open, prevent touch/wheel scroll, and close on Escape key
+  React.useEffect(() => {
+    if (!open) return;
+
+    const originalBodyOverflow = document.body.style.overflow;
+    const originalHtmlOverflow = document.documentElement.style.overflow;
+    document.body.style.overflow = "hidden";
+    document.documentElement.style.overflow = "hidden";
+
+    const preventDefault = (e: Event) => {
+      e.preventDefault();
+    };
+
+    window.addEventListener("wheel", preventDefault, { passive: false });
+    window.addEventListener("touchmove", preventDefault, { passive: false });
+
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === "Escape") {
+        onOpenChange(false);
+      }
+    };
+    window.addEventListener("keydown", handleKeyDown);
+
+    return () => {
+      document.body.style.overflow = originalBodyOverflow;
+      document.documentElement.style.overflow = originalHtmlOverflow;
+      window.removeEventListener("wheel", preventDefault);
+      window.removeEventListener("touchmove", preventDefault);
+      window.removeEventListener("keydown", handleKeyDown);
+    };
+  }, [open, onOpenChange]);
+
   const receiptData: HistoryReceipt = {
     id: orderId,
     orderNumber: orderId,
@@ -64,7 +96,7 @@ export function ReceiptModal({
           exit={{ opacity: 0 }}
           transition={{ duration: 0.2 }}
           onClick={() => onOpenChange(false)}
-          className="fixed inset-0 z-50 bg-black/60 backdrop-blur-md flex flex-col items-center justify-center p-4 overflow-y-auto select-none"
+          className="fixed inset-0 z-50 bg-black/60 backdrop-blur-md flex flex-col items-center justify-center p-4 overflow-hidden no-scrollbar select-none touch-none overscroll-none"
         >
           <motion.div
             key="receipt-card-wrapper"
@@ -73,7 +105,7 @@ export function ReceiptModal({
             exit={{ scale: 0.88, opacity: 0, y: 15 }}
             transition={{ type: "spring", stiffness: 300, damping: 24 }}
             onClick={(e) => e.stopPropagation()}
-            className="w-full max-w-[280px] flex flex-col items-center my-auto"
+            className="w-full max-w-[280px] max-h-full flex flex-col items-center justify-center my-auto pointer-events-auto"
           >
             {/* Reusable Receipt Card */}
             <ReceiptCard

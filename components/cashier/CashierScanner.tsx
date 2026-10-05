@@ -4,22 +4,22 @@ import { useState, useEffect, useRef } from "react";
 import Image from "next/image";
 import { motion, AnimatePresence } from "framer-motion";
 import { Html5Qrcode, Html5QrcodeSupportedFormats } from "html5-qrcode";
-import ManualEntryModal from "./ManualEntryModal";
+import ManualEntryModal from "@/components/driver/ManualEntryModal";
 
-export interface ScanResultData {
+export interface CashierScanResultData {
   orderId: string;
   customer?: string;
   itemTitle?: string;
   timestamp: string;
 }
 
-export default function DriverScanner() {
+export default function CashierScanner() {
   const [isScanning, setIsScanning] = useState(false);
   const [cameraError, setCameraError] = useState<string | null>(null);
   const [scanStatus, setScanStatus] = useState<"idle" | "success" | "failed">(
     "idle",
   );
-  const [scannedResult, setScannedResult] = useState<ScanResultData | null>(
+  const [scannedResult, setScannedResult] = useState<CashierScanResultData | null>(
     null,
   );
   const [isManualModalOpen, setIsManualModalOpen] = useState(false);
@@ -31,7 +31,7 @@ export default function DriverScanner() {
 
     if (isScanning && !scannedResult) {
       setCameraError(null);
-      const scannerId = "driver-qr-reader";
+      const scannerId = "cashier-qr-reader";
 
       // Small delay to ensure DOM element is mounted
       const timer = setTimeout(async () => {
@@ -162,7 +162,7 @@ export default function DriverScanner() {
         className="relative w-[260px] sm:w-[280px] aspect-[4/5] max-w-[80vw] flex items-center justify-center my-2"
         style={{ aspectRatio: "4 / 5" }}
       >
-        {/* Frame graphic (Border pattern matching user mockup) */}
+        {/* Frame graphic (Border pattern matching mockup) */}
         <div className="absolute inset-0 pointer-events-none z-20">
           <Image
             src="/images/driver-scanner-frame-v2.png"
@@ -176,10 +176,10 @@ export default function DriverScanner() {
         {/* Viewport Interior Content */}
         <div className="relative w-[84%] h-[87%] rounded-[36px] overflow-hidden flex items-center justify-center z-10">
           {isScanning ? (
-            /* STATE 2: ACTIVE LIVE CAMERA SCANNING */
+            /* STATE 1: ACTIVE LIVE CAMERA SCANNING */
             <div className="relative w-full h-full flex flex-col items-center justify-center bg-black overflow-hidden">
               <div
-                id="driver-qr-reader"
+                id="cashier-qr-reader"
                 className="w-full h-full [&_video]:object-cover [&_video]:w-full [&_video]:h-full"
               />
 
@@ -228,7 +228,7 @@ export default function DriverScanner() {
               )}
             </div>
           ) : (
-            /* STATE 3: IDLE VIEW WITH BLURRED TARGET (Matching Mockup) */
+            /* STATE 2: IDLE VIEW WITH TARGET */
             <div className="relative w-full h-full flex items-center justify-center">
               <div className="relative w-full h-full filter blur-[4.5px] opacity-80 select-none pointer-events-none">
                 <Image
@@ -279,7 +279,7 @@ export default function DriverScanner() {
           scanStatus === "failed" ||
           (scannedResult && scanStatus !== "idle")) && (
           <motion.div
-            key="driver-scan-overlay"
+            key="cashier-scan-overlay"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
