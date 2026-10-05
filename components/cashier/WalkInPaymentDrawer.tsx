@@ -115,17 +115,17 @@ export default function WalkInPaymentDrawer({
                 className="w-full flex flex-col items-center"
               >
                 {/* Weight Header */}
-                <h2 className="font-mono text-3xl sm:text-4xl font-black text-black tracking-tight leading-none mb-1">
+                <span className="text-[38px] font-normal leading-none text-black mb-1">
                   {kg}kg
-                </h2>
+                </span>
 
                 {/* Amount Pill Badge */}
-                <div className="bg-[#1317E8] text-white text-[11px] font-mono font-bold px-2.5 py-0.5 rounded-full shadow-xs mb-2">
+                <span className="bg-brand-primary text-white text-[11px] px-3 py-0.5 rounded-full inline-flex items-center justify-center mb-2.5">
                   {formattedPrice}
-                </div>
+                </span>
 
                 {/* 'via:' label */}
-                <span className="text-[11px] text-neutral-400 font-sans tracking-wide mb-2.5">
+                <span className="text-[11px] text-neutral-400 mb-2 text-center">
                   via:
                 </span>
 
@@ -157,18 +157,18 @@ export default function WalkInPaymentDrawer({
                 {/* Top Row: Left (10kg & Price badge) / Right (via & Method sticker) */}
                 <div className="flex items-center justify-between w-full px-2 mb-5">
                   {/* Left Column */}
-                  <div className="flex flex-col items-start">
-                    <h2 className="font-mono text-3xl sm:text-4xl font-black text-black tracking-tight leading-none mb-1">
+                  <div className="flex flex-col items-start gap-1">
+                    <span className="text-[38px] font-normal leading-none text-black">
                       {kg}kg
-                    </h2>
-                    <div className="bg-[#1317E8] text-white text-[11px] font-mono font-bold px-2.5 py-0.5 rounded-full shadow-xs">
+                    </span>
+                    <span className="bg-brand-primary text-white text-[11px] px-3 py-0.5 rounded-full inline-flex items-center justify-center">
                       {formattedPrice}
-                    </div>
+                    </span>
                   </div>
 
                   {/* Right Column */}
                   <div className="flex flex-col items-center">
-                    <span className="text-[11px] text-neutral-400 font-sans tracking-wide mb-1">
+                    <span className="text-[11px] text-neutral-400 mb-1 text-center">
                       via:
                     </span>
                     <PaymentMethodBadge

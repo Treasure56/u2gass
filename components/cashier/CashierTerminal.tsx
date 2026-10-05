@@ -70,7 +70,7 @@ export default function CashierTerminal({
         <div className="absolute inset-2.5 rounded-[16px] border border-black/15 pointer-events-none z-10" />
 
         {/* Header Label */}
-        <div className="text-[12px] sm:text-[13px] tracking-[0.22em] text-[#55555C] font-mono font-semibold uppercase mb-3 z-10">
+        <div className="text-md tracking-[0.22em] text-[#D4D4D4] font-mono font-semibold uppercase mb-3 z-10">
           AMOUNT IN NAIRA
         </div>
 

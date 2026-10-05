@@ -10,7 +10,6 @@ interface PaymentMethodBadgeProps {
   selected?: boolean;
   onClick?: () => void;
   className?: string;
-  size?: "sm" | "md" | "lg";
 }
 
 export default function PaymentMethodBadge({
@@ -18,9 +17,8 @@ export default function PaymentMethodBadge({
   selected = false,
   onClick,
   className = "",
-  size = "md",
 }: PaymentMethodBadgeProps) {
-  // Mockup tilts: CASH tilts left (-6deg), POS is straight (0deg), BANK TRANS tilts right (+6deg)
+  // Tilts matching user section: CASH tilts left (-6deg), POS is straight (0deg), BANK TRANS tilts right (+6deg)
   const defaultRotation =
     method === "CASH"
       ? "-rotate-6"
@@ -28,38 +26,22 @@ export default function PaymentMethodBadge({
         ? "rotate-0"
         : "rotate-6";
 
-  const sizeClasses =
-    size === "sm"
-      ? "w-14 h-12 text-[10px] p-1"
-      : size === "lg"
-        ? "w-20 h-16 text-sm p-2"
-        : "w-16 h-14 text-xs p-1.5";
+  const label = method === "BANK TRANS" ? "BANK\nTRANS" : method;
 
   return (
     <button
       type="button"
       onClick={onClick}
       className={cn(
-        "relative rounded-[18px] bg-white border border-dashed flex flex-col items-center justify-center font-mono font-black text-black select-none cursor-pointer transition-all duration-200",
+        "w-18.75 h-17.25 rounded-[18px] border border-dashed bg-white flex items-center justify-center font-medium text-[24px] leading-[1.05] text-black text-center whitespace-pre-line transition-all active:scale-95 cursor-pointer select-none",
         defaultRotation,
-        sizeClasses,
         selected
-          ? "border-black shadow-[0_6px_16px_rgba(0,0,0,0.18)] scale-105 ring-2 ring-[#1317E8]/20"
-          : "border-[#D1D5DB] shadow-[0_4px_10px_rgba(0,0,0,0.08)] hover:shadow-md hover:scale-105 active:scale-95",
+          ? "border-black shadow-[0_8px_24px_rgba(0,0,0,0.18)] scale-105 ring-2 ring-brand-primary/30"
+          : "border-[#D1D5DB] shadow-[0_8px_20px_rgba(0,0,0,0.08)] hover:border-brand-primary hover:text-brand-primary",
         className,
       )}
     >
-      {/* Subtle paper / stamp corner detail */}
-      <div className="absolute inset-0 rounded-[18px] bg-gradient-to-b from-white to-[#F5F5F7] pointer-events-none -z-10" />
-
-      {method === "BANK TRANS" ? (
-        <div className="flex flex-col items-center leading-none text-center">
-          <span className="tracking-wider text-[11px] leading-tight">BANK</span>
-          <span className="tracking-wider text-[10px] leading-tight">TRANS</span>
-        </div>
-      ) : (
-        <span className="tracking-wider text-[12px]">{method}</span>
-      )}
+      {label}
     </button>
   );
 }
