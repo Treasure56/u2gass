@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { ArrowRight, ArrowLeft } from "lucide-react";
 import Navbar from "@/components/layout/Navbar";
 import CashierTerminal from "@/components/cashier/CashierTerminal";
 import CashierScanner from "@/components/cashier/CashierScanner";
@@ -67,7 +68,7 @@ export default function CashierPageClient() {
               className="px-3 py-1 rounded-full bg-neutral-100 hover:bg-neutral-200 text-neutral-700 hover:text-black border border-neutral-200 text-[11px] font-mono font-semibold uppercase tracking-wider flex items-center gap-1.5 transition-all active:scale-95 cursor-pointer shadow-2xs"
             >
               <span>WALK IN</span>
-              <span className="text-[12px] leading-none">→</span>
+              <ArrowRight className="w-3.5 h-3.5 text-neutral-500 group-hover:text-black" />
             </button>
           ) : (
             <button
@@ -75,7 +76,7 @@ export default function CashierPageClient() {
               onClick={() => setView("scanner")}
               className="px-3 py-1 rounded-full bg-neutral-100 hover:bg-neutral-200 text-neutral-700 hover:text-black border border-neutral-200 text-[11px] font-mono font-semibold uppercase tracking-wider flex items-center gap-1.5 transition-all active:scale-95 cursor-pointer shadow-2xs"
             >
-              <span className="text-[12px] leading-none">←</span>
+              <ArrowLeft className="w-3.5 h-3.5 text-neutral-500 group-hover:text-black" />
               <span>SCANNER</span>
             </button>
           )}
