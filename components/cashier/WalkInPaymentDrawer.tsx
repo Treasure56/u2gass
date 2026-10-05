@@ -95,14 +95,14 @@ export default function WalkInPaymentDrawer({
             exit={{ y: "100%", opacity: 0 }}
             transition={{ type: "spring", damping: 26, stiffness: 280 }}
             onClick={(e) => e.stopPropagation()}
-            className="absolute bottom-0 inset-x-0 z-30 w-full bg-white rounded-t-[36px] shadow-[0_-8px_32px_rgba(0,0,0,0.22)] border-t border-black/5 px-5 pt-3 pb-6 flex flex-col items-center select-none"
+            className="absolute bottom-0 inset-x-0 z-30 w-full bg-white rounded-[64px] shadow-[0_-8px_32px_rgba(0,0,0,0.2)] border border-neutral-100/80 px-5 pt-3.5 pb-8 flex flex-col items-center select-none"
           >
-            {/* Top Drag Handle Indicator */}
+            {/* Drag Handle / Close Pill */}
             <button
               type="button"
               onClick={handleClose}
               aria-label="Close"
-              className="w-11 h-1 bg-[#8E8E93] rounded-full mx-auto mb-3 cursor-pointer hover:bg-neutral-600 transition-colors"
+              className="w-12 h-1 bg-[#8E8E93] rounded-full mx-auto mb-3.5 cursor-pointer hover:bg-neutral-600 transition-colors"
             />
 
             {!selectedMethod ? (

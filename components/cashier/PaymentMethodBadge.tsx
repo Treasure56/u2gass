@@ -40,17 +40,17 @@ export default function PaymentMethodBadge({
       type="button"
       onClick={onClick}
       className={cn(
-        "relative rounded-xl bg-white border flex flex-col items-center justify-center font-mono font-black text-black select-none cursor-pointer transition-all duration-200",
+        "relative rounded-[18px] bg-white border border-dashed flex flex-col items-center justify-center font-mono font-black text-black select-none cursor-pointer transition-all duration-200",
         defaultRotation,
         sizeClasses,
         selected
           ? "border-black shadow-[0_6px_16px_rgba(0,0,0,0.18)] scale-105 ring-2 ring-[#1317E8]/20"
-          : "border-neutral-300 shadow-[0_4px_10px_rgba(0,0,0,0.08)] hover:shadow-md hover:scale-105 active:scale-95",
+          : "border-[#D1D5DB] shadow-[0_4px_10px_rgba(0,0,0,0.08)] hover:shadow-md hover:scale-105 active:scale-95",
         className,
       )}
     >
       {/* Subtle paper / stamp corner detail */}
-      <div className="absolute inset-0 rounded-xl bg-gradient-to-b from-white to-[#F5F5F7] pointer-events-none -z-10" />
+      <div className="absolute inset-0 rounded-[18px] bg-gradient-to-b from-white to-[#F5F5F7] pointer-events-none -z-10" />
 
       {method === "BANK TRANS" ? (
         <div className="flex flex-col items-center leading-none text-center">
