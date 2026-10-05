@@ -84,9 +84,7 @@ export default function CashierPageClient() {
         {/* Main View: Scan Box First, or Walk-in Terminal */}
         <div className="w-full flex flex-col items-center mt-1 sm:mt-2">
           {view === "scanner" ? (
-            <CashierScanner
-              onBackToTerminal={() => setView("terminal")}
-            />
+            <CashierScanner />
           ) : (
             <CashierTerminal
               initialValue="1KG"
