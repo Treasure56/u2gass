@@ -13,7 +13,11 @@ export interface CashierScanResultData {
   timestamp: string;
 }
 
-export default function CashierScanner() {
+export interface CashierScannerProps {
+  onBackToTerminal?: () => void;
+}
+
+export default function CashierScanner({ onBackToTerminal }: CashierScannerProps = {}) {
   const [isScanning, setIsScanning] = useState(false);
   const [cameraError, setCameraError] = useState<string | null>(null);
   const [scanStatus, setScanStatus] = useState<"idle" | "success" | "failed">(
@@ -272,6 +276,17 @@ export default function CashierScanner() {
           />
         </button>
       </div>
+
+      {/* Return to Walk-in Terminal Link */}
+      {onBackToTerminal && (
+        <button
+          type="button"
+          onClick={onBackToTerminal}
+          className="mt-4 text-xs font-mono text-[#1317E8] hover:underline uppercase tracking-wider flex items-center gap-1 cursor-pointer"
+        >
+          ← WALK-IN TERMINAL
+        </button>
+      )}
 
       {/* ──────────────── SUCCESS / FAILED OVERLAY (OUTSIDE SCAN BOX, ON TOP) ──────────────── */}
       <AnimatePresence>

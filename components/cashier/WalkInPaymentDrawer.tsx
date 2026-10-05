@@ -1,0 +1,198 @@
+"use client";
+
+import React, { useState } from "react";
+import { motion, AnimatePresence } from "framer-motion";
+import PaymentMethodBadge, { PaymentMethod } from "./PaymentMethodBadge";
+
+export interface WalkInOrderData {
+  kg: number;
+  totalNaira: number;
+  method: PaymentMethod;
+  timestamp: string;
+  orderId: string;
+}
+
+interface WalkInPaymentDrawerProps {
+  open: boolean;
+  onOpenChange: (open: boolean) => void;
+  kg: number;
+  ratePerKg?: number;
+  onSuccess?: (order: WalkInOrderData) => void;
+}
+
+export default function WalkInPaymentDrawer({
+  open,
+  onOpenChange,
+  kg,
+  ratePerKg = 1000,
+  onSuccess,
+}: WalkInPaymentDrawerProps) {
+  const [selectedMethod, setSelectedMethod] = useState<PaymentMethod | null>(
+    null,
+  );
+  const [isProcessing, setIsProcessing] = useState(false);
+
+  // Calculate total price based on kg (e.g. 10kg = ₦10,000)
+  const totalNaira = kg * ratePerKg;
+  const formattedPrice = `₦${totalNaira.toLocaleString()}`;
+
+  const handleSelectMethod = (method: PaymentMethod) => {
+    setSelectedMethod(method);
+  };
+
+  const handleContinueToPay = () => {
+    if (!selectedMethod || isProcessing) return;
+
+    setIsProcessing(true);
+
+    // Simulate payment transaction
+    setTimeout(() => {
+      setIsProcessing(false);
+      const orderData: WalkInOrderData = {
+        kg,
+        totalNaira,
+        method: selectedMethod,
+        timestamp: new Date().toLocaleTimeString([], {
+          hour: "2-digit",
+          minute: "2-digit",
+        }),
+        orderId: `ORD-${Math.floor(10000 + Math.random() * 90000)}`,
+      };
+
+      onSuccess?.(orderData);
+      onOpenChange(false);
+      // Reset state for subsequent uses
+      setSelectedMethod(null);
+    }, 1500);
+  };
+
+  const handleClose = () => {
+    if (isProcessing) return;
+    onOpenChange(false);
+    setSelectedMethod(null);
+  };
+
+  return (
+    <AnimatePresence>
+      {open && (
+        <div className="fixed inset-0 z-40 flex items-end justify-center pointer-events-auto">
+          {/* Backdrop */}
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.2 }}
+            onClick={handleClose}
+            className="absolute inset-0 bg-black/20 backdrop-blur-[1px]"
+          />
+
+          {/* Bottom Card / Drawer Container */}
+          <motion.div
+            initial={{ y: "100%", opacity: 0.8 }}
+            animate={{ y: 0, opacity: 1 }}
+            exit={{ y: "100%", opacity: 0 }}
+            transition={{ type: "spring", damping: 28, stiffness: 320 }}
+            className="relative z-50 w-full max-w-[340px] sm:max-w-[370px] bg-white rounded-t-[32px] rounded-b-[24px] shadow-[0_-12px_40px_rgba(0,0,0,0.15),0_4px_20px_rgba(0,0,0,0.08)] border border-black/5 px-6 pt-3 pb-6 mb-4 flex flex-col items-center select-none"
+          >
+            {/* Top Drag Handle Indicator */}
+            <div
+              onClick={handleClose}
+              className="w-10 h-1.25 bg-[#D1D5DB] rounded-full mx-auto mb-4 cursor-pointer hover:bg-neutral-400 transition-colors"
+            />
+
+            {!selectedMethod ? (
+              /* ──────────────── STATE 1: WALK-IN PAYMENT 2 (SELECT METHOD) ──────────────── */
+              <motion.div
+                key="select-mode"
+                initial={{ opacity: 0, y: 6 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -6 }}
+                className="w-full flex flex-col items-center"
+              >
+                {/* Weight Header */}
+                <h2 className="font-mono text-4xl sm:text-5xl font-black text-black tracking-tight leading-none mb-1">
+                  {kg}kg
+                </h2>
+
+                {/* Amount Pill Badge */}
+                <div className="bg-[#1317E8] text-white text-[11px] font-mono font-bold px-2.5 py-0.5 rounded-full shadow-sm mb-3">
+                  {formattedPrice}
+                </div>
+
+                {/* 'via:' label */}
+                <span className="text-[12px] text-neutral-400 font-sans tracking-wide mb-3">
+                  via:
+                </span>
+
+                {/* Payment Option Stickers */}
+                <div className="flex items-center justify-center gap-4 w-full py-1">
+                  <PaymentMethodBadge
+                    method="CASH"
+                    onClick={() => handleSelectMethod("CASH")}
+                  />
+                  <PaymentMethodBadge
+                    method="POS"
+                    onClick={() => handleSelectMethod("POS")}
+                  />
+                  <PaymentMethodBadge
+                    method="BANK TRANS"
+                    onClick={() => handleSelectMethod("BANK TRANS")}
+                  />
+                </div>
+              </motion.div>
+            ) : (
+              /* ──────────────── STATE 2 & 3: WALK-IN PAY CONFIRM ──────────────── */
+              <motion.div
+                key="confirm-mode"
+                initial={{ opacity: 0, scale: 0.98 }}
+                animate={{ opacity: 1, scale: 1 }}
+                exit={{ opacity: 0, scale: 0.98 }}
+                className="w-full flex flex-col"
+              >
+                {/* Top Row: Left (10kg & Price badge) / Right (via & Method sticker) */}
+                <div className="flex items-center justify-between w-full px-2 mb-6">
+                  {/* Left Column */}
+                  <div className="flex flex-col items-start">
+                    <h2 className="font-mono text-4xl sm:text-[44px] font-black text-black tracking-tight leading-none mb-1.5">
+                      {kg}kg
+                    </h2>
+                    <div className="bg-[#1317E8] text-white text-[11px] font-mono font-bold px-2.5 py-0.5 rounded-full shadow-sm">
+                      {formattedPrice}
+                    </div>
+                  </div>
+
+                  {/* Right Column */}
+                  <div className="flex flex-col items-center">
+                    <span className="text-[11px] text-neutral-400 font-sans tracking-wide mb-1">
+                      via:
+                    </span>
+                    <PaymentMethodBadge
+                      method={selectedMethod}
+                      selected
+                      onClick={() => !isProcessing && setSelectedMethod(null)}
+                      className="cursor-pointer"
+                    />
+                  </div>
+                </div>
+
+                {/* Action Button: 'Continue to Pay' OR 'PROCESSING...' */}
+                <button
+                  type="button"
+                  disabled={isProcessing}
+                  onClick={handleContinueToPay}
+                  className={`w-full py-3.5 rounded-full font-sans font-bold text-base tracking-wide transition-all shadow-md flex items-center justify-center cursor-pointer ${
+                    isProcessing
+                      ? "bg-[#969AF6] text-white cursor-not-allowed opacity-95"
+                      : "bg-[#1317E8] hover:bg-[#1014cc] text-white active:scale-[0.98]"
+                  }`}
+                >
+                  {isProcessing ? "PROCESSING..." : "Continue to Pay"}
+                </button>
+              </motion.div>
+            )}
+          </motion.div>
+        </div>
+      )}
+    </AnimatePresence>
+  );
+}

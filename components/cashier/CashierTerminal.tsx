@@ -1,0 +1,125 @@
+"use client";
+
+import React, { useState } from "react";
+import Image from "next/image";
+import TerminalScreenBox from "@/components/terminal-screen-box";
+import { TerminalKeyboard } from "@/app/(public)/terminal-keyboard";
+import WalkInPaymentDrawer, { WalkInOrderData } from "./WalkInPaymentDrawer";
+import { deleteKeypadDigit, appendKeypadDigit } from "@/functions";
+
+interface CashierTerminalProps {
+  initialValue?: string;
+  ratePerKg?: number;
+  onScanClick?: () => void;
+  onManualEntryClick?: () => void;
+  onPaymentSuccess?: (order: WalkInOrderData) => void;
+  className?: string;
+}
+
+export default function CashierTerminal({
+  initialValue = "1KG",
+  ratePerKg = 1000,
+  onScanClick,
+  onManualEntryClick,
+  onPaymentSuccess,
+  className = "",
+}: CashierTerminalProps) {
+  const [displayValue, setDisplayValue] = useState<string>(initialValue);
+  const [hasStartedTyping, setHasStartedTyping] = useState<boolean>(false);
+  const [drawerOpen, setDrawerOpen] = useState(false);
+
+  // Parse current numerical KG value
+  const parsedKg = parseInt(displayValue.replace(/[^0-9]/g, ""), 10) || 1;
+
+  const handleKeyPress = (key: string) => {
+    if (key === "PAY") {
+      setDrawerOpen(true);
+      return;
+    }
+
+    if (key === "x" || key === "X" || key === "×") {
+      setHasStartedTyping(true);
+      setDisplayValue((prev) => deleteKeypadDigit(prev));
+      return;
+    }
+
+    const isFirst = !hasStartedTyping;
+    setHasStartedTyping(true);
+    setDisplayValue((prev) => appendKeypadDigit(prev, key, isFirst));
+  };
+
+  const handleOrderSuccess = (order: WalkInOrderData) => {
+    // Reset terminal to default 1KG
+    setDisplayValue("1KG");
+    setHasStartedTyping(false);
+    onPaymentSuccess?.(order);
+  };
+
+  return (
+    <div
+      className={`w-full max-w-[340px] sm:max-w-[360px] mx-auto flex flex-col items-center select-none ${className}`}
+    >
+      {/* ──────────────── CASHIER GREY TERMINAL BODY ──────────────── */}
+      <div className="w-full bg-[#E1E1E5] rounded-[24px] pt-6 pb-7 px-8 relative shadow-[0_12px_32px_rgba(0,0,0,0.12),0_4px_12px_rgba(0,0,0,0.06),inset_0_1px_2px_rgba(255,255,255,0.85)] border border-[#C6C6CA] flex flex-col items-center overflow-hidden">
+        {/* Subtle speckled/noise texture overlay */}
+        <div className="absolute inset-0 opacity-20 mix-blend-multiply noise-texture pointer-events-none" />
+
+        {/* Inner Border Line (similar to original POS style) */}
+        <div className="absolute inset-2.5 rounded-[16px] border border-black/15 pointer-events-none z-10" />
+
+        {/* Header Label */}
+        <div className="text-[12px] sm:text-[13px] tracking-[0.22em] text-[#55555C] font-mono font-semibold uppercase mb-3 z-10">
+          AMOUNT IN NAIRA
+        </div>
+
+        {/* LED Digital Screen Box */}
+        <TerminalScreenBox
+          value={displayValue}
+          variant="red"
+          className="mb-6 z-10"
+        />
+
+        {/* Keypad Grid (3 x 4) */}
+        <TerminalKeyboard onKeyPress={handleKeyPress} className="mb-2 z-10" />
+      </div>
+
+      {/* ──────────────── ACTION CONTROLS (SCAN & MANUAL PEN) ──────────────── */}
+      <div className="flex items-center justify-center gap-4 mt-5">
+        {/* Lavender / Periwinkle SCAN Button */}
+        <button
+          type="button"
+          onClick={onScanClick}
+          className="py-3 px-9 rounded-full bg-[#969AF6] hover:bg-[#858AF4] text-white text-sm font-bold tracking-widest uppercase flex items-center justify-center cursor-pointer active:scale-95 transition-all shadow-sm"
+        >
+          SCAN
+        </button>
+
+        {/* Circular Signature / Manual Entry Button */}
+        <button
+          type="button"
+          onClick={onManualEntryClick}
+          aria-label="Manual Entry"
+          className="w-12 h-12 rounded-full bg-linear-to-b from-white to-[#D5D5D5] border border-[#D8DCE5] flex items-center justify-center cursor-pointer active:scale-95 shadow-sm transition-transform"
+        >
+          <Image
+            src="/images/manual-sign-pen.png"
+            alt="Manual Entry"
+            width={26}
+            height={26}
+            className="object-contain"
+            priority
+          />
+        </button>
+      </div>
+
+      {/* ──────────────── WALK-IN PAYMENT DRAWER (SLIDES UP ON 'PAY') ──────────────── */}
+      <WalkInPaymentDrawer
+        open={drawerOpen}
+        onOpenChange={setDrawerOpen}
+        kg={parsedKg}
+        ratePerKg={ratePerKg}
+        onSuccess={handleOrderSuccess}
+      />
+    </div>
+  );
+}
