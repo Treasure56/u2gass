@@ -6,9 +6,8 @@ import { AnimatePresence } from "framer-motion";
 import type { Product } from "@/types";
 import { products } from "@/data";
 import { useCartStore, type CartItem } from "@/stores/cartStore";
-import BottomSheetModal from "@/components/ui/BottomSheetModal";
+import FullScreenView from "@/components/ui/FullScreenView";
 import {
-  ShopHeader,
   ShopBasketView,
   ShopProductDetail,
   ShopGridView,
@@ -137,31 +136,36 @@ export function ShopModal({
     router.push("/");
   };
 
-  const handleBackHeader = () => {
+  const handleBack = () => {
     if (viewMode === "basket") {
       setViewMode(selectedProduct ? "detail" : "grid");
     } else if (viewMode === "detail") {
+      setViewMode("grid");
+    } else {
       handleCloseModal();
     }
-    setIsSearchOpen(false);
   };
 
   return (
-    <BottomSheetModal
+    <FullScreenView
       open={open}
-      onOpenChange={(newOpen) => {
-        if (!newOpen) {
-          handleCloseModal();
-        }
-      }}
-      customHeader={
-        <ShopHeader viewMode={viewMode} onBack={handleBackHeader} />
+      onClose={handleBack}
+      headerRight={
+        <div className="flex items-center gap-2">
+          {viewMode !== "basket" && cartItems.length > 0 && (
+            <button
+              type="button"
+              onClick={() => setViewMode("basket")}
+              className="text-[11px] font-mono font-bold text-[#1317E4] bg-neutral-100 hover:bg-neutral-200 px-3 py-1 rounded-full uppercase tracking-wider transition-all cursor-pointer"
+            >
+              BASKET ({cartItems.reduce((acc, i) => acc + i.quantity, 0)})
+            </button>
+          )}
+        </div>
       }
-      scrollable={false}
-      className="w-full max-w-[420px] h-[90vh] max-h-[850px] pt-3 pb-8 px-6"
+      contentClassName="pt-2 pb-12 w-full max-w-105"
     >
-      {/* Scrollable Content Area */}
-      <div className="flex-1 overflow-y-auto overflow-x-hidden no-scrollbar w-full relative">
+      <div className="w-full flex-1 flex flex-col items-center">
         <AnimatePresence mode="wait">
           {viewMode === "basket" ? (
             <ShopBasketView
@@ -195,7 +199,7 @@ export function ShopModal({
         </AnimatePresence>
       </div>
 
-      {/* Floating Checkout & Payment Options Overlay */}
+      {/* Floating Checkout & Payment Options Overlay (Group B: Stays as payment drawer) */}
       <ShopPaymentOverlay
         showPayment={showPayment}
         onClosePayment={() => setShowPayment(false)}
@@ -207,7 +211,7 @@ export function ShopModal({
         paymentStatus={paymentStatus}
         onDismissSuccess={handleDismissSuccess}
       />
-    </BottomSheetModal>
+    </FullScreenView>
   );
 }
 

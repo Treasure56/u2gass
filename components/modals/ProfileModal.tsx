@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import Image from "next/image";
-import { BottomSheetModal } from "@/components/ui/BottomSheetModal";
+import FullScreenView from "@/components/ui/FullScreenView";
 import { useAuthStore, defaultUserProfile } from "@/stores/authStore";
 
 type ProfileModalProps = {
@@ -61,27 +61,20 @@ export default function ProfileModal({
   };
 
   return (
-    <BottomSheetModal
+    <FullScreenView
       open={open}
-      onOpenChange={onOpenChange}
-      title={
-        <>
-          PERSONAL
-          <br />
-          DETAILS
-        </>
-      }
-      headerAction={
+      onClose={() => onOpenChange(false)}
+      title="PERSONAL DETAILS"
+      headerRight={
         <button
           type="button"
           onClick={handleLogout}
-          className="text-[10px] text-[#838EF8] hover:text-[#1317E4] uppercase tracking-wider px-2 py-1 rounded-md hover:bg-neutral-50 transition-colors cursor-pointer mt-1"
+          className="text-[11px] text-[#838EF8] hover:text-[#1317E4] font-mono font-bold uppercase tracking-wider px-2 py-1 rounded-md hover:bg-neutral-50 transition-colors cursor-pointer"
         >
           LOG OUT
         </button>
       }
-      className="w-full max-w-[440px] sm:max-w-[450px]"
-      contentClassName="pt-1 pb-8"
+      contentClassName="pt-2 pb-8"
     >
       {/* Polaroid-Style Photo */}
       <div className="flex flex-col items-center mb-4 shrink-0">
@@ -240,9 +233,8 @@ export default function ProfileModal({
           </div>
         )}
       </div>
-    </BottomSheetModal>
+    </FullScreenView>
   );
 }
 
 export { ProfileModal };
-

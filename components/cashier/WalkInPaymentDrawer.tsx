@@ -146,7 +146,6 @@ export default function WalkInPaymentDrawer({
                 </div>
               </motion.div>
             ) : (
-              /* ──────────────── STATE 2 & 3: WALK-IN PAY CONFIRM ──────────────── */
               <motion.div
                 key="confirm-mode"
                 initial={{ opacity: 0, scale: 0.98 }}
@@ -186,7 +185,7 @@ export default function WalkInPaymentDrawer({
                     type="button"
                     disabled={isProcessing}
                     onClick={handleContinueToPay}
-                    className={`w-fit px-8 py-3 rounded-full font-sans font-bold text-sm tracking-wide transition-all shadow-md flex items-center justify-center cursor-pointer ${
+                    className={`w-fit px-8 py-4 rounded-full font-bold text-md transition-all shadow-md flex items-center justify-center cursor-pointer ${
                       isProcessing
                         ? "bg-[#969AF6] text-white cursor-not-allowed opacity-95"
                         : "bg-[#1317E8] hover:bg-[#1014cc] text-white active:scale-[0.98]"
