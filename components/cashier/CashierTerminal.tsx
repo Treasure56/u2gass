@@ -5,7 +5,7 @@ import Image from "next/image";
 import TerminalScreenBox from "@/components/terminal-screen-box";
 import { TerminalKeyboard } from "@/app/(public)/terminal-keyboard";
 import WalkInPaymentDrawer, { WalkInOrderData } from "./WalkInPaymentDrawer";
-import { deleteKeypadDigit, appendKeypadDigit } from "@/functions";
+import { deleteKeypadDigit, appendKeypadDigit } from "@/helpers/functions";
 
 interface CashierTerminalProps {
   initialValue?: string;

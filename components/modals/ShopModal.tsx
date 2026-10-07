@@ -7,6 +7,7 @@ import type { Product } from "@/types";
 import { products } from "@/data";
 import { useCartStore, type CartItem } from "@/stores/cartStore";
 import FullScreenView from "@/components/ui/FullScreenView";
+import { paths } from "@/utils/paths";
 import {
   ShopBasketView,
   ShopProductDetail,
@@ -133,7 +134,7 @@ export function ShopModal({
     setShowPayment(false);
     setSelectedPaymentMethod(null);
     handleCloseModal();
-    router.push("/");
+    router.push(paths.home);
   };
 
   const handleBack = () => {

@@ -4,7 +4,7 @@ import Image from "next/image";
 import { motion } from "framer-motion";
 import { useCartStore } from "@/stores/cartStore";
 import { cn } from "@/lib/utils";
-import { formatItemTitle, formatItemVariant } from "@/functions";
+import { formatItemTitle, formatItemVariant } from "@/helpers/functions";
 
 export type ShopBasketViewProps = {
   onGoShopping: () => void;

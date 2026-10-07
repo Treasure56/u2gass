@@ -7,6 +7,8 @@ import type { ReceiptItem, ReceiptModalProps, HistoryReceipt } from "@/types";
 import { dummyReceiptItems } from "@/data";
 import { ReceiptCard } from "@/components/receipt/ReceiptCard";
 
+import { paths } from "@/utils/paths";
+
 export type { ReceiptItem, ReceiptModalProps };
 
 export function ReceiptModal({
@@ -20,21 +22,19 @@ export function ReceiptModal({
 }: ReceiptModalProps) {
   const router = useRouter();
 
-  // Format current date e.g. "17 MAR" if date not provided
   const displayDate =
     date ||
     new Date()
       .toLocaleDateString("en-US", { day: "2-digit", month: "short" })
       .toUpperCase();
 
-  // Fallback sample items matching the design if none passed
   const displayItems: ReceiptItem[] =
     items && items.length > 0 ? items : dummyReceiptItems;
 
   const handleKeep = () => {
     onKeep?.();
     onOpenChange(false);
-    router.push("/login");
+    router.push(paths.login);
   };
 
   const handleScreenshot = () => {

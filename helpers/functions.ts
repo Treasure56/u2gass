@@ -1,5 +1,57 @@
 import type { GasStock, Notification, GasOrderDraft } from "@/types";
 
+const KNOWN_TITLE_ALIASES: Record<string, string> = {
+  "u2 gas cylinder": "U2 Power Cylinder",
+  "u2 power hose": "U2 Power Hose",
+  "u2 ignition battery": "U2 Ignition Battery",
+  "u2 hose clamps": "U2 Hose Clamps",
+};
+
+const KNOWN_VARIANT_ALIASES: Record<string, string> = {
+  "6kg": "MEDIUM",
+  "12.5kg": "BIG",
+  "3kg": "SMALL",
+};
+
+export function formatNaira(amount: number): string {
+  return new Intl.NumberFormat("en-NG", {
+    style: "currency",
+    currency: "NGN",
+    maximumFractionDigits: 0,
+  }).format(amount);
+}
+
+export function koboToNaira(kobo: number): number {
+  return Math.round(kobo / 100);
+}
+
+export function formatItemTitle(name?: string | null): string {
+  if (!name) return "U2 Accessory";
+  const trimmed = name.trim();
+  const lower = trimmed.toLowerCase();
+
+  if (KNOWN_TITLE_ALIASES[lower]) {
+    return KNOWN_TITLE_ALIASES[lower];
+  }
+
+  return trimmed.replace(
+    /\w\S*/g,
+    (word) => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase()
+  );
+}
+
+export function formatItemVariant(desc?: string | null): string {
+  if (!desc) return "STANDARD";
+  const trimmed = desc.trim();
+  const lower = trimmed.toLowerCase();
+
+  if (KNOWN_VARIANT_ALIASES[lower]) {
+    return KNOWN_VARIANT_ALIASES[lower];
+  }
+
+  return trimmed.toUpperCase();
+}
+
 export function getEffectiveRates(
   stock?: GasStock,
   ratePerKg: number = 1400
@@ -71,4 +123,3 @@ export function appendKeypadDigit(
 
   return `${currentDigits}${digit}KG`;
 }
-

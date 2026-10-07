@@ -21,7 +21,7 @@ export interface TerminalKeyProps {
 /**
  * Individual tactile terminal key button
  */
-export function TerminalKey({
+export default function TerminalKey({
   label,
   onClick,
   disabled = false,
@@ -77,6 +77,3 @@ export function TerminalKeyboard({
     </div>
   );
 }
-
-export default TerminalKey;
-

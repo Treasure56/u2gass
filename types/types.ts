@@ -10,26 +10,29 @@ export type OrderStatus =
   | "fulfilled"
   | "cancelled"
   | "expired";
+
 export type PaymentStatus =
   | "pending"
   | "paid"
   | "failed"
   | "refunded"
   | "partially_refunded";
-// The first value is the *stored* gateway tag, set server-side. Nothing in the
-// UI sends it — see §6.1.
+
 export type PaymentMethod =
   | "monnify"
   | "cash"
   | "card_terminal"
   | "bank_transfer"
   | "opay";
+
 export type ReservationStatus =
   | "reserved"
   | "fulfilled"
   | "released"
   | "expired";
+
 export type QrStatus = "unscanned" | "scanned" | "expired" | "void";
+
 export type DeliveryStatus =
   | "assigned"
   | "en_route"
@@ -37,12 +40,14 @@ export type DeliveryStatus =
   | "failed"
   | "rescheduled"
   | "returned";
+
 export type DriverStatus = "available" | "busy" | "offline";
 export type StaffStatus = "active" | "suspended" | "removed";
 export type StockMove = "addition" | "removal" | "correction";
 export type ReservationKind = "gas" | "product";
 export type ImageOwner = "product" | "profile" | "bundle" | "stock_entry";
 export type CompatMatch = "equal" | "in_set" | "numeric_range";
+
 export type RefundStatus =
   | "pending"
   | "processing"
@@ -50,37 +55,59 @@ export type RefundStatus =
   | "declined"
   | "manual";
 
-export interface Profile {
-  profile_id: string;
-  role: AppRole;
-  display_name: string | null;
-  first_name: string | null;
-  last_name: string | null;
-  email: string | null; // citext, case-insensitive
-  phone: string | null; // ^\+?[0-9]{7,15}$ — no spaces or dashes
-  email_verified_at: string | null;
-  avatar_asset?: ImageRef | null;
-}
-
 export interface ImageRef {
   base_path: string;
   width?: number;
   height?: number;
 }
 
+export interface Profile {
+  profile_id: string;
+  role: AppRole;
+  display_name: string | null;
+  first_name: string | null;
+  last_name: string | null;
+  email: string | null;
+  phone: string | null;
+  email_verified_at?: string | null;
+  avatar_asset?: ImageRef | null;
+}
+
+export interface UserProfile {
+  email?: string;
+  name?: string;
+  firstName?: string;
+  lastName?: string;
+  address?: string;
+  avatar?: string;
+}
+
 export interface StaffMember {
   staff_id: string;
   status: StaffStatus;
   bank_name: string | null;
-  account_number: string | null; // exactly 10 digits
-  hired_at: string;
-  profile: Profile | null; // role lives on profile.role
+  account_number: string | null;
+  hired_at?: string;
+  profile: Profile | null;
+}
+
+export interface AdminStaffProfile {
+  id: string;
+  firstName: string;
+  lastName: string;
+  role: string;
+  email: string;
+  bankName: string;
+  accountNumber: string;
+  avatarUrl: string;
+  isBlackPlaceholder?: boolean;
+  isOnline?: boolean;
 }
 
 export interface DriverProfile {
   driver_id: string;
   status: DriverStatus;
-  phone: string; // NOT NULL in the schema
+  phone: string;
   vehicle_info: string | null;
   completed_deliveries: number;
   profile: {
@@ -92,12 +119,12 @@ export interface DriverProfile {
 export interface Product {
   product_id: string;
   name?: string;
-  subtitle?: string | null; // the "4 Feet" line in the design
+  subtitle?: string | null;
   description?: string | null;
-  price_kobo?: number; // > 0
+  price_kobo?: number;
   stock_qty?: number;
-  reserved_qty?: number; // 0 <= reserved_qty <= stock_qty
-  available?: number; // derived: stock_qty - reserved_qty
+  reserved_qty?: number;
+  available?: number;
   active?: boolean;
   product_category?: { slug: string; name: string } | null;
   image: string;
@@ -118,15 +145,14 @@ export interface Bundle {
   description: string | null;
   price_kobo: number;
   image: ImageRef | null;
-  members: BundleMember[]; // 2 or 3, never more
-  separately_kobo: number; // sum of members at list price
+  members: BundleMember[];
+  separately_kobo: number;
   saving_kobo: number;
-  available: number; // min over members
-  unavailable_member: string | null; // which member is blocking, if any
+  available: number;
+  unavailable_member: string | null;
 }
 
 export interface BundleOffer {
-  // "complete the set"
   bundle_id: string;
   name: string;
   price_kobo: number;
@@ -134,7 +160,7 @@ export interface BundleOffer {
   separately_kobo: number;
   saving_kobo: number;
   available: number;
-  adds: string[]; // what this bundle adds to the basket
+  adds: string[];
   members: { product_id: string; name: string; image_path: string | null }[];
 }
 
@@ -149,13 +175,23 @@ export interface Zone {
 export interface OrderItem {
   order_item_id: string;
   quantity: number;
-  unit_price_kobo: number; // frozen at order time
-  bundle_id: string | null; // set when the line came from a bundle
+  unit_price_kobo: number;
+  bundle_id: string | null;
   product: {
     name: string;
     subtitle?: string | null;
     image_asset?: ImageRef | null;
   } | null;
+}
+
+export interface CartItem {
+  id: string;
+  name: string;
+  description: string;
+  image: string;
+  priceNaira: number;
+  quantity: number;
+  unavailable?: boolean;
 }
 
 export interface ReceiptItem {
@@ -209,7 +245,7 @@ export interface HistoryModalProps {
 
 export interface Order {
   order_id: string;
-  order_number: string; // 'U2-' || nextval, e.g. U2-100045
+  order_number: string;
   order_type: OrderType;
   status: OrderStatus;
   payment_status: PaymentStatus;
@@ -218,12 +254,12 @@ export interface Order {
   gas_subtotal_kobo: number;
   items_subtotal_kobo: number;
   delivery_fee_kobo: number;
-  total_kobo: number; // gas + items + delivery, always
-  hold_expires_at: string | null; // set while unpaid
+  total_kobo: number;
+  hold_expires_at: string | null;
   created_at: string;
   fulfilled_at: string | null;
   delivery_address?: string | null;
-  rate_at_purchase?: number | null; // kobo/kg, frozen
+  rate_at_purchase?: number | null;
   items?: OrderItem[];
   payments?: {
     method: string;
@@ -232,13 +268,12 @@ export interface Order {
     paid_at: string | null;
   }[];
   delivery?: Delivery | null;
-  guest_name?: string | null; // walk-in or guest
+  guest_name?: string | null;
   guest_phone?: string | null;
   profile?: { display_name: string | null; phone: string | null } | null;
 }
 
 export interface OrderSummary {
-  // queue and lookup rows — less than full
   order_id: string;
   order_number: string;
   status: OrderStatus;
@@ -257,12 +292,12 @@ export interface Delivery {
   delivery_id?: string;
   status: DeliveryStatus;
   delivery_address: string;
-  failure_reason: string | null; // required when status = 'failed'
-  attempt_count?: number; // >= 1
+  failure_reason: string | null;
+  attempt_count?: number;
   assigned_at?: string;
   en_route_at: string | null;
-  delivered_at: string | null; // required when status = 'delivered'
-  eta_minutes?: number | null; // minutes left in the departure window
+  delivered_at: string | null;
+  eta_minutes?: number | null;
   zone?: { name: string; fee_kobo: number } | null;
   driver?: {
     phone: string;
@@ -284,21 +319,21 @@ export interface GasStock {
   total_received_kg: number;
   reserved_kg: number;
   deducted_kg: number;
-  available_kg: number; // total - reserved - deducted
+  available_kg: number;
   rate_kobo_per_kg: number;
   fill_percent: number;
   days_remaining: number | null;
   burn_kg_per_day?: number;
   burn_basis_days?: number;
   burn_sample_kg?: number;
-  low_gas_level?: 0 | 1 | 2 | 3; // 0 none … 3 almost empty
+  low_gas_level?: 0 | 1 | 2 | 3;
   updated_at: string;
 }
 
 export interface StockEntry {
   entry_id: string;
   move: StockMove;
-  amount_kg: number; // non-zero
+  amount_kg: number;
   note: string | null;
   entry_date: string;
   admin?: { display_name: string | null } | null;
@@ -306,11 +341,11 @@ export interface StockEntry {
 
 export interface SavedAddress {
   address_id: string;
-  label: string; // HOME, SHOP, MUM'S PLACE — 1–40 chars
-  line: string; // 6–500 chars
-  latitude: number | null; // nothing populates these today
+  label: string;
+  line: string;
+  latitude: number | null;
   longitude: number | null;
-  is_default: boolean; // at most one per person
+  is_default: boolean;
   created_at: string;
   zone: {
     zone_id: string;
@@ -322,7 +357,7 @@ export interface SavedAddress {
 
 export interface Notification {
   notification_id: string;
-  kind: string; // e.g. order.confirmed, stock.low
+  kind: string;
   title: string;
   body: string | null;
   order_id: string | null;
@@ -339,7 +374,7 @@ export interface AuditEntry {
   after: Record<string, unknown> | null;
   note: string | null;
   created_at: string;
-  request_id?: string | null; // correlates with X-Request-Id
+  request_id?: string | null;
   actor?: { display_name: string | null; role: string } | null;
 }
 
@@ -349,7 +384,7 @@ export interface Reconciliation {
   transaction_count: number;
   reconciliation: {
     counted_kobo: number;
-    variance_kobo: number; // generated: counted - expected
+    variance_kobo: number;
     note: string | null;
     closed_at: string | null;
   } | null;
@@ -452,3 +487,81 @@ export interface TerminalKeyboardProps {
   disabled?: boolean;
   className?: string;
 }
+
+export interface TankHistoryRecord {
+  id: string;
+  timestamp: string;
+  level: number;
+  type: "REFILL" | "DISPENSE" | "AUDIT" | "MANUAL_UPDATE";
+  volumeLiters: number;
+  operator: string;
+}
+
+export interface SalesHistoryItem {
+  id: string;
+  type: "LPG" | "PMS" | "AGO";
+  method: "POS" | "CASH" | "TRANSFER";
+  amount?: number;
+  liters?: number;
+  timestamp?: string;
+}
+
+export interface GasHistoryRecord {
+  id: string;
+  dayLabel: string;
+  amountTons: number;
+  actionType: "ADDITION" | "REMOVAL";
+  operatorName: string;
+  month: string;
+  qrCode?: string;
+  dateStr?: string;
+}
+
+export type TimeFilter = "TODAY" | "THIS MONTH" | "MAY" | "JUNE";
+export type DriverStatusTab = "COMPLETE" | "UNFULFILLED" | "CANCELLED";
+export type CashierStatusTab = "IN—PERSON" | "ONLINE";
+
+export interface AdminSalesHistoryItem {
+  id: string;
+  title: string;
+  date: Date;
+  paymentMethod: "POS" | "TRANS" | "CASH";
+}
+
+export interface StaffDriverRecord {
+  id: string;
+  title: string;
+  date: Date;
+}
+
+export interface StaffCashierRecord {
+  id: string;
+  title: string;
+  date: Date;
+  paymentMethod: "POS" | "TRANS" | "CASH";
+}
+
+export type DriverDeliveryStatusTab = "COMPLETED" | "UNFULFILLED" | "CANCELLED";
+
+export interface DriverDeliveryOrder {
+  id: string;
+  title: string;
+  date: Date;
+  customerName: string;
+  address?: string;
+  mapImage?: string;
+  status: DriverDeliveryStatusTab;
+}
+
+export type CashierPaymentFilter = "ALL" | "CASH" | "POS" | "TRANSFER";
+
+export interface CashierTransactionItem {
+  id: string;
+  title: string;
+  date: Date;
+  paymentMethod: "POS" | "TRANS" | "CASH" | "TRANSFER";
+  mode: CashierStatusTab;
+}
+
+
+

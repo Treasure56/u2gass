@@ -1,14 +1,7 @@
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
 
-export interface UserProfile {
-  email?: string;
-  name?: string;
-  firstName?: string;
-  lastName?: string;
-  address?: string;
-  avatar?: string;
-}
+import type { UserProfile } from "@/types";
 
 interface AuthState {
   isLoggedIn: boolean;

@@ -5,9 +5,11 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
 import { useAuthStore } from "@/stores/authStore";
+import { ArrowLeft } from "lucide-react";
 import { LoginKeypad } from "./LoginKeypad";
 import { SocialAuth } from "./SocialAuth";
-import { EmailLoginForm } from "./EmailLoginForm";
+import EmailLoginForm from "./EmailLoginForm";
+import { paths } from "@/utils/paths";
 
 export default function LoginForm() {
   const router = useRouter();
@@ -17,7 +19,6 @@ export default function LoginForm() {
   const login = useAuthStore((state) => state.login);
 
   const handleTerminalKeyPress = (key: string) => {
-    // If on email login, numeric or backspace can work
     if (showEmailLogin) {
       if (key === "x" || key === "X") {
         setEmail((prev) => prev.slice(0, -1));
@@ -36,23 +37,20 @@ export default function LoginForm() {
     login({ email: finalEmail });
     setTimeout(() => {
       setIsSubmitting(false);
-      router.push("/?logged_in=true");
+      router.push(`${paths.home}?logged_in=true`);
     }, 300);
   };
 
   const handleQuickAuth = () => {
     login({ email: "user@u2gas.com" });
-    router.push("/?logged_in=true");
+    router.push(`${paths.home}?logged_in=true`);
   };
 
   return (
     <>
-      {/* Top Hanging POS Terminal Device Keypad */}
       <LoginKeypad onKeyPress={handleTerminalKeyPress} />
 
-      {/* Main Content Area */}
       <div className="w-full max-w-[340px] flex flex-col items-center mt-9 px-4">
-        {/* Pixel Headline */}
         <motion.h1
           initial={{ opacity: 0, y: 15 }}
           animate={{ opacity: 1, y: 0 }}
@@ -64,7 +62,6 @@ export default function LoginForm() {
           CONVINIENT
         </motion.h1>
 
-        {/* Dynamic Transition Area based on login state */}
         <AnimatePresence mode="wait">
           {!showEmailLogin ? (
             <SocialAuth
@@ -82,15 +79,17 @@ export default function LoginForm() {
           )}
         </AnimatePresence>
 
-        {/* Return to Terminal link */}
-        <div className="mt-8 text-center">
-          <Link
-            href="/"
-            className="text-[11px] tracking-wider text-[#838EF8] uppercase hover:text-[#1317E4] transition-colors"
-          >
-            ← BACK TO TERMINAL
-          </Link>
-        </div>
+        {!showEmailLogin && (
+          <div className="mt-8 text-center">
+            <Link
+              href={paths.home}
+              className="text-[11px] tracking-wider text-[#838EF8] uppercase hover:text-[#1317E4] transition-colors inline-flex items-center gap-1.5"
+            >
+              <ArrowLeft className="w-3.5 h-3.5 stroke-[2.5]" />
+              <span>BACK TO TERMINAL</span>
+            </Link>
+          </div>
+        )}
       </div>
     </>
   );

@@ -1,6 +1,7 @@
 "use client";
 
 import { motion } from "framer-motion";
+import { ArrowLeft } from "lucide-react";
 
 export interface EmailLoginFormProps {
   email: string;
@@ -17,6 +18,8 @@ export function EmailLoginForm({
   onBack,
   isSubmitting,
 }: EmailLoginFormProps) {
+  const hasText = email.trim().length > 0;
+
   return (
     <motion.form
       key="email-view"
@@ -33,7 +36,7 @@ export function EmailLoginForm({
       </p>
 
       {/* Dashed Pill Input Box */}
-      <div className="w-full max-w-[280px] sm:max-w-[290px] h-[52px] rounded-full bg-white border border-dashed border-[#CCD0DC] flex items-center justify-center px-6 shadow-xs focus-within:border-[#838EF8] transition-colors">
+      <div className="w-full max-w-[280px] sm:max-w-[290px] h-[52px] rounded-full bg-white border border-dashed border-[#CCD0DC] flex items-center justify-center px-6 shadow-xs focus-within:border-[#1317E4] transition-colors">
         <input
           type="text"
           value={email}
@@ -44,22 +47,27 @@ export function EmailLoginForm({
         />
       </div>
 
-      {/* CONTINUE Lavender/Periwinkle Pill Button */}
+      {/* CONTINUE Pill Button - switches to primary color #1317E4 when text is entered */}
       <button
         type="submit"
         disabled={isSubmitting}
-        className="w-full max-w-[190px] mt-6 py-3 rounded-full bg-[#838EF8] hover:bg-[#727ef5] active:scale-95 text-white text-[17px] tracking-wider uppercase flex items-center justify-center transition-all cursor-pointer shadow-[0_4px_16px_rgba(131,142,248,0.3)]"
+        className={`w-full max-w-[190px] mt-6 py-3 rounded-full text-white text-[17px] tracking-wider uppercase flex items-center justify-center transition-all cursor-pointer active:scale-95 ${
+          hasText
+            ? "bg-[#1317E4] hover:bg-[#0f12c5] shadow-[0_4px_20px_rgba(19,23,228,0.4)]"
+            : "bg-[#838EF8] hover:bg-[#727ef5] shadow-[0_4px_16px_rgba(131,142,248,0.3)]"
+        }`}
       >
         {isSubmitting ? "LOGGING IN..." : "CONTINUE"}
       </button>
 
-      {/* Back to Options button */}
+      {/* Back to Options button with Lucide ArrowLeft */}
       <button
         type="button"
         onClick={onBack}
-        className="mt-5 text-[10px] tracking-wider text-[#838EF8] hover:text-[#1317E4] uppercase transition-colors cursor-pointer select-none"
+        className="mt-5 text-[11px] tracking-wider text-[#838EF8] hover:text-[#1317E4] uppercase transition-colors cursor-pointer select-none flex items-center gap-1.5"
       >
-        ← BACK
+        <ArrowLeft className="w-3.5 h-3.5 stroke-[2.5]" />
+        <span>BACK</span>
       </button>
     </motion.form>
   );

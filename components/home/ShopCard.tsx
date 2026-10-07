@@ -2,6 +2,7 @@
 
 import { useRouter } from "next/navigation";
 import type { Product } from "@/types";
+import { paths } from "@/utils/paths";
 
 type ShopCardProps = {
   item: Product;
@@ -16,7 +17,7 @@ export default function ShopCard({ item, onSelect, bgColor }: ShopCardProps) {
     if (onSelect) {
       onSelect(item);
     } else {
-      router.push("/shop");
+      router.push(paths.shop);
     }
   };
 

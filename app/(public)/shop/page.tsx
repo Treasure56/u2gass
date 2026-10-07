@@ -2,15 +2,16 @@
 
 import { useState, useRef, useEffect } from "react";
 import Image from "next/image";
-import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
-import MarqueeSlider from "@abundiko/react-marquee";
+import { ChevronRight } from "lucide-react";
 import { ShopModal } from "@/components/modals/ShopModal";
 import { products } from "@/data";
 import type { Product } from "@/types";
-import { ArrowLeftIcon } from "lucide-react";
+import { paths } from "@/utils/paths";
 
 export default function ShopPage() {
+  const router = useRouter();
   const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
@@ -31,6 +32,10 @@ export default function ShopPage() {
     setSearchQuery("");
   };
 
+  const handleBack = () => {
+    router.push(paths.home);
+  };
+
   useEffect(() => {
     if (isSearchOpen && inputRef.current) {
       inputRef.current.focus();
@@ -39,46 +44,34 @@ export default function ShopPage() {
 
   return (
     <main className="w-full min-h-screen bg-white flex flex-col items-center select-none pb-12 relative overflow-x-hidden">
-      {/* Top Header - Truly Fixed at top so it never scrolls */}
-      <header className="fixed top-0 left-1/2 -translate-x-1/2 w-full max-w-105 z-30 bg-white/95 backdrop-blur-md px-5 pt-6 pb-3 flex items-start justify-between">
-        <Link href="/" className="text-left group cursor-pointer">
-          <h1 className="text-[30px] leading-[1.15] text-[#838EF8] tracking-[0.08em] uppercase group-hover:text-[#6a76ee] transition-colors whitespace-pre-line">
-            {"SHOP FOR\nACCESSORIES"}
-          </h1>
-          <span className="text-[10px] text-neutral-400 uppercase tracking-wider flex items-center gap-1 mt-1 group-hover:text-[#838EF8]">
-            <ArrowLeftIcon className="w-2 h-2" />
-            HOME
-          </span>
-        </Link>
+      <div className="w-full max-w-[420px] flex flex-col pt-5 pb-8 px-5 relative min-h-screen">
+        {/* HEADER: BACK BUTTON (LEFT) & BLUE CIRCLE (RIGHT) */}
+        <div className="w-full flex items-center justify-between mb-8 z-10">
+          <button
+            type="button"
+            onClick={handleBack}
+            className="bg-[#1317E4] text-white font-mono text-[11px] font-bold px-3 py-1.5 rounded-[6px] tracking-wider uppercase flex items-center gap-1.5 shadow-xs hover:bg-[#0f12c5] active:scale-95 transition-all cursor-pointer select-none"
+            aria-label="Go Back"
+          >
+            <ChevronRight className="w-3.5 h-3.5 stroke-[2.5]" />
+            <span className="leading-none">BACK</span>
+          </button>
 
-        {/* Mini LED Rate Ticker */}
-        <div className="w-20 h-8 bg-[#1A1A1A] rounded-[6px] border border-neutral-800 shadow-[inset_0_1px_2px_rgba(255,255,255,0.1)] flex items-center justify-center overflow-hidden shrink-0 mt-0.5">
-          <div className="w-full h-full flex items-center overflow-hidden [&_.marquee-anim]:h-full [&_.marquee-anim]:flex [&_.marquee-anim]:items-center">
-            <MarqueeSlider
-              speed={6}
-              axis="-x"
-              className="h-full flex items-center"
-            >
-              <span className="inline-flex items-center text-[10px] leading-none font-bold tracking-wider px-1 select-none text-[#FF2222] whitespace-nowrap drop-shadow-[0_0_4px_rgba(255,30,30,0.9)]">
-                Today&apos;s Rate: 1kg : ₦1,400 •&nbsp;
-              </span>
-              <span className="inline-flex items-center text-[10px] leading-none font-bold tracking-wider px-1 select-none text-[#FF2222] whitespace-nowrap drop-shadow-[0_0_4px_rgba(255,30,30,0.9)]">
-                Today&apos;s Rate: 1kg : ₦1,400 •&nbsp;
-              </span>
-            </MarqueeSlider>
-          </div>
+          {/* <button
+            type="button"
+            className="w-8 h-8 rounded-full bg-[#1317E4] shadow-xs active:scale-95 transition-transform cursor-pointer"
+            aria-label="Profile or Cart"
+          /> */}
         </div>
-      </header>
 
-      <div className="w-full max-w-105 flex flex-col pt-36 pb-8 px-5 relative min-h-screen">
-        {/* Products Grid — 2 columns matching user design aspect ratio 406:482 */}
+        {/* PRODUCTS GRID */}
         <div
           style={{
             filter: isSearchOpen ? "blur(10px)" : "none",
             opacity: isSearchOpen ? 0.35 : 1,
             transition: "filter 0.3s ease, opacity 0.3s ease",
           }}
-          className={`w-full grid grid-cols-2 gap-x-5 gap-y-7 px-1 mb-8 ${
+          className={`w-full grid grid-cols-2 gap-x-6 gap-y-8 px-1 mb-10 ${
             isSearchOpen ? "pointer-events-none scale-[0.98]" : ""
           }`}
         >
@@ -104,26 +97,31 @@ export default function ShopPage() {
           ))}
 
           {filteredItems.length === 0 && (
-            <div className="col-span-2 py-12 text-center text-sm text-neutral-400">
+            <div className="col-span-2 py-12 text-center text-sm text-neutral-400 font-mono">
               NO ACCESSORIES FOUND
             </div>
           )}
         </div>
 
-        {/* Search Button under products */}
+        {/* SEARCH ANYTHING BUTTON */}
         {!isSearchOpen && (
-          <button
-            type="button"
-            onClick={() => setIsSearchOpen(true)}
-            className="w-full max-w-[260px] mx-auto rounded-full border border-dashed border-[#B0B0B0] bg-white shadow-[0_2px_12px_rgba(0,0,0,0.04)] px-5 py-3 flex items-center justify-center cursor-pointer hover:border-[#838EF8] hover:shadow-[0_4px_16px_rgba(131,142,248,0.12)] transition-all active:scale-[0.98] mb-4"
-          >
-            <span className="text-[13px] tracking-wider text-[#838EF8]/80 uppercase">
-              SEARCH ANYTHING
-            </span>
-          </button>
+          <div className="w-full flex justify-center mt-auto pb-4">
+            <button
+              type="button"
+              onClick={() => setIsSearchOpen(true)}
+              className="w-full max-w-[260px] rounded-full border border-dashed border-[#C5CAE9] bg-white shadow-[0_2px_12px_rgba(0,0,0,0.04)] px-5 py-3 flex items-center justify-center cursor-pointer hover:border-[#1317E4] hover:shadow-[0_4px_16px_rgba(19,23,228,0.12)] transition-all active:scale-[0.98]"
+            >
+              <span
+                style={{ fontFamily: 'var(--font-jgs7), "jgs7", monospace' }}
+                className="text-[12px] tracking-wider text-[#838EF8] uppercase"
+              >
+                SEARCH ANYTHING
+              </span>
+            </button>
+          </div>
         )}
 
-        {/* Search Overlay */}
+        {/* SEARCH OVERLAY */}
         <AnimatePresence>
           {isSearchOpen && (
             <>
@@ -141,9 +139,9 @@ export default function ShopPage() {
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, y: 20 }}
                 transition={{ type: "spring", damping: 24, stiffness: 300 }}
-                className="fixed top-36 left-4 right-4 z-40 flex justify-center"
+                className="fixed top-24 left-4 right-4 z-40 flex justify-center"
               >
-                <div className="w-full max-w-[320px] relative rounded-full border border-dashed border-[#838EF8] bg-white shadow-[0_8px_32px_rgba(131,142,248,0.2)] px-5 py-3 flex items-center transition-all">
+                <div className="w-full max-w-[320px] relative rounded-full border border-dashed border-[#1317E4] bg-white shadow-[0_8px_32px_rgba(19,23,228,0.2)] px-5 py-3 flex items-center transition-all">
                   <input
                     ref={inputRef}
                     type="text"
@@ -153,13 +151,16 @@ export default function ShopPage() {
                       if (e.key === "Escape") handleCloseSearch();
                     }}
                     placeholder="SEARCH ANYTHING"
-                    className="w-full bg-transparent text-center text-[13px] tracking-wider text-[#838EF8] placeholder:text-[#838EF8]/70 outline-none uppercase"
+                    style={{
+                      fontFamily: 'var(--font-jgs7), "jgs7", monospace',
+                    }}
+                    className="w-full bg-transparent text-center text-[13px] tracking-wider text-[#1317E4] placeholder:text-[#838EF8]/70 outline-none uppercase"
                   />
                   {searchQuery ? (
                     <button
                       type="button"
                       onClick={() => setSearchQuery("")}
-                      className="absolute right-4 text-[#838EF8] text-base hover:opacity-70 cursor-pointer"
+                      className="absolute right-4 text-[#1317E4] text-base hover:opacity-70 cursor-pointer"
                     >
                       ×
                     </button>
@@ -178,7 +179,6 @@ export default function ShopPage() {
           )}
         </AnimatePresence>
 
-        {/* Product Detail Modal (Opens when an accessory is clicked) */}
         <ShopModal
           open={isModalOpen}
           onOpenChange={setIsModalOpen}

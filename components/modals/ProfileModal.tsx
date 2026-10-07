@@ -4,7 +4,6 @@ import { useState, useEffect } from "react";
 import Image from "next/image";
 import FullScreenView from "@/components/ui/FullScreenView";
 import { useAuthStore, defaultUserProfile } from "@/stores/authStore";
-
 type ProfileModalProps = {
   open: boolean;
   onOpenChange: (open: boolean) => void;
@@ -51,13 +50,6 @@ export default function ProfileModal({
       address,
     });
     setIsEditing(false);
-  };
-
-  const handleAddAddress = () => {
-    const input = document.getElementById("profile-address-input");
-    if (input) {
-      input.focus();
-    }
   };
 
   return (
@@ -223,12 +215,6 @@ export default function ProfileModal({
               height={200}
               className="w-full h-full object-cover select-none"
               priority
-            />
-            <button
-              type="button"
-              onClick={handleAddAddress}
-              aria-label="Add Address"
-              className="absolute inset-x-[18%] top-[34%] bottom-[34%] rounded-full cursor-pointer hover:bg-white/10 active:scale-95 transition-all"
             />
           </div>
         )}

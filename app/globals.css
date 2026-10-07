@@ -1,3 +1,4 @@
+@import url('https://fonts.googleapis.com/css2?family=Barlow+Semi+Condensed:ital,wght@0,400;0,500;0,600;0,700;0,800;0,900;1,600&display=swap');
 @import "tailwindcss";
 @import "tw-animate-css";
 @import "shadcn/tailwind.css";
@@ -27,6 +28,7 @@
   --font-jgs7: var(--font-jgs7), "jgs7", monospace;
   --font-led: var(--font-jgs7), "jgs7", monospace;
   --font-caption: var(--font-jgs7), "jgs7", monospace;
+  --font-barlow: var(--font-barlow-semi-condensed), "Barlow Semi Condensed", sans-serif;
   --color-primary: var(--primary);
   --color-primary-foreground: var(--primary-foreground);
   --color-led-red: var(--led-red);

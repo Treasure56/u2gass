@@ -1,127 +1,168 @@
 "use client";
 
-import { useState } from "react";
-import ReceiptCard from "@/components/receipt/ReceiptCard";
-import type { HistoryReceipt } from "@/types";
-import { dummyHistoryReceipts, HISTORY_MONTHS } from "@/data";
-import { useAuthStore } from "@/stores/authStore";
-import { cn } from "@/lib/utils";
-import FullScreenView from "@/components/ui/FullScreenView";
-
-type FilterTab = "TODAY" | "MONTH" | string;
+import React, { useState } from "react";
+import Image from "next/image";
+import { motion, AnimatePresence } from "framer-motion";
+import { ChevronRight } from "lucide-react";
+import { format } from "date-fns";
+import type {
+  CashierTransactionItem,
+  CashierStatusTab,
+  CashierPaymentFilter,
+} from "@/types";
+import { dummyCashierTransactions } from "@/data";
 
 export interface CashierHistoryModalProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
-  receipts?: HistoryReceipt[];
-  cashierName?: string;
+  transactions?: CashierTransactionItem[];
 }
 
 export default function CashierHistoryModal({
   open,
   onOpenChange,
-  receipts = dummyHistoryReceipts,
-  cashierName,
+  transactions = dummyCashierTransactions,
 }: CashierHistoryModalProps) {
-  const [activeTab, setActiveTab] = useState<FilterTab>("TODAY");
-  const user = useAuthStore((state) => state.user);
+  const [activeMode, setActiveMode] = useState<CashierStatusTab>("IN—PERSON");
+  const [activeFilter, setActiveFilter] = useState<CashierPaymentFilter>("CASH");
 
-  const displayName = cashierName || user?.lastName || "CASHIER";
+  const paymentFilters: CashierPaymentFilter[] = [
+    "ALL",
+    "CASH",
+    "POS",
+    "TRANSFER",
+  ];
 
-  const tabs: FilterTab[] = ["TODAY", "MONTH", ...HISTORY_MONTHS];
-
-  // Filter logic
-  const filteredReceipts = (() => {
-    if (activeTab === "TODAY") {
-      return receipts.filter((r) => {
-        const d = (r.date || "").toLowerCase();
-        return (
-          d.includes("today") ||
-          d.includes("oct 5") ||
-          d.includes("10/5") ||
-          d.includes("2026")
-        );
-      });
+  const filteredTransactions = transactions.filter((tx) => {
+    if (tx.mode !== activeMode) return false;
+    if (activeFilter === "ALL") return true;
+    if (activeFilter === "TRANSFER") {
+      return tx.paymentMethod === "TRANS" || tx.paymentMethod === "TRANSFER";
     }
-    if (activeTab === "MONTH") {
-      const currentMonth = "OCT";
-      return receipts.filter(
-        (r) => r.month.toUpperCase() === currentMonth.toUpperCase(),
-      );
-    }
-    // Filter by specific month
-    return receipts.filter(
-      (r) => r.month.toUpperCase() === activeTab.toUpperCase(),
-    );
-  })();
+    return tx.paymentMethod === activeFilter;
+  });
 
   return (
-    <FullScreenView
-      open={open}
-      onClose={() => onOpenChange(false)}
-      contentClassName="pt-2 pb-6"
-    >
-      {/* ── Custom Cashier Header ── */}
-      <div className="w-full flex flex-col gap-1 mb-4 px-1 text-left">
-        <h2 className="text-[40px] text-brand-primary tracking-wider uppercase font-bold leading-none">
-          {displayName}&apos;S
-        </h2>
-        <p className="text-base text-[#1317E4] tracking-[0.16em] uppercase leading-none font-semibold">
-          CASHIER &mdash; HISTORY
-        </p>
-      </div>
+    <AnimatePresence>
+      {open && (
+        <motion.div
+          key="cashier-history-modal"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          exit={{ opacity: 0 }}
+          className="fixed inset-0 z-50 bg-white overflow-y-auto no-scrollbar flex flex-col items-center select-none px-6 pt-5 pb-10"
+        >
+          <div className="w-full max-w-[420px] flex flex-col items-center">
+            {/* HEADER: BACK BUTTON */}
+            <div className="w-full flex items-center justify-start mb-6">
+              <button
+                type="button"
+                onClick={() => onOpenChange(false)}
+                className="bg-[#1317E4] text-white font-mono text-[11px] font-bold px-3 py-1.5 rounded-[6px] tracking-wider uppercase flex items-center gap-1.5 shadow-xs hover:bg-[#0f12c5] active:scale-95 transition-all cursor-pointer select-none"
+                aria-label="Go Back"
+              >
+                <ChevronRight className="w-3.5 h-3.5 stroke-[2.5]" />
+                <span className="leading-none">BACK</span>
+              </button>
+            </div>
 
-      {/* ── Filter Tabs ── */}
-      <div className="w-full flex items-center gap-4 overflow-x-auto no-scrollbar py-1.5 mb-4 shrink-0 px-1 touch-pan-x">
-        {tabs.map((tab) => {
-          const isActive = tab === activeTab;
-          const hasReceipts = receipts.some(
-            (r) => r.month.toUpperCase() === tab.toUpperCase(),
-          );
+            {/* PRIMARY MODE TABS (IN—PERSON | ONLINE) */}
+            <div className="flex items-center justify-center gap-6 mb-5">
+              {(["IN—PERSON", "ONLINE"] as CashierStatusTab[]).map((mode) => {
+                const isActive = activeMode === mode;
+                return (
+                  <button
+                    key={mode}
+                    type="button"
+                    onClick={() => setActiveMode(mode)}
+                    className={`text-[12px] font-mono font-bold px-3.5 py-1 tracking-wider uppercase transition-all cursor-pointer ${
+                      isActive
+                        ? "bg-[#1317E4] text-white rounded-[8px] shadow-xs"
+                        : "text-[#1317E4] hover:opacity-75"
+                    }`}
+                  >
+                    {mode}
+                  </button>
+                );
+              })}
+            </div>
 
-          return (
-            <button
-              key={tab}
-              type="button"
-              onClick={() => setActiveTab(tab)}
-              className={cn(
-                "text-[20px] font-mono tracking-wider select-none shrink-0 transition-all cursor-pointer uppercase px-3.5 py-1 rounded-[8px] font-medium leading-none",
-                isActive
-                  ? "bg-[#1317E4] text-white shadow-xs"
-                  : hasReceipts || tab === "TODAY" || tab === "MONTH"
-                    ? "text-[#1317E4] hover:bg-[#1317E4]/5"
-                    : "text-[#1317E4]/35 hover:text-[#1317E4]/60",
-              )}
-            >
-              {tab}
-            </button>
-          );
-        })}
-      </div>
+            {/* PAYMENT METHOD SUB-FILTERS (ALL | CASH | POS | TRANSFER) */}
+            <div className="flex items-center justify-center gap-5 sm:gap-7 mb-6 flex-wrap">
+              {paymentFilters.map((filter) => {
+                const isActive = activeFilter === filter;
+                return (
+                  <button
+                    key={filter}
+                    type="button"
+                    onClick={() => setActiveFilter(filter)}
+                    className={`font-mono font-bold tracking-wider uppercase transition-all cursor-pointer select-none ${
+                      isActive
+                        ? "text-[#1317E4] text-lg sm:text-[19px] scale-105"
+                        : "text-[#838EF8] text-sm sm:text-base hover:text-[#1317E4]"
+                    }`}
+                  >
+                    {filter}
+                  </button>
+                );
+              })}
+            </div>
 
-      {/* ── Horizontal Receipts Slider ── */}
-      <div className="w-full flex-1 overflow-x-auto overflow-y-hidden no-scrollbar py-1 flex items-start justify-center touch-pan-x">
-        {filteredReceipts.length > 0 ? (
-          <div className="flex gap-5 items-start snap-x snap-mandatory px-1 pt-1 pb-4">
-            {filteredReceipts.map((receipt) => (
-              <ReceiptCard
-                key={receipt.id}
-                receipt={receipt}
-                showDeliveryHeader={false}
-              />
-            ))}
+            {/* DASHED CONTAINER FOR SALES / TRANSACTIONS */}
+            <div className="w-full max-w-[360px] sm:max-w-[380px] rounded-[28px] border-2 border-dashed border-[#C5CAE9] p-5 sm:p-6 flex flex-col gap-4 bg-white shadow-xs">
+              <div className="flex flex-col gap-4">
+                {filteredTransactions.map((tx) => (
+                  <div
+                    key={tx.id}
+                    className="w-full flex items-center justify-between py-1"
+                  >
+                    {/* LEFT: Cylinder Icon + Amount & Liters + Timestamp */}
+                    <div className="flex items-center gap-3.5">
+                      <div className="relative w-[30px] h-[38px] shrink-0 flex items-center justify-center filter drop-shadow-[0_4px_6px_rgba(0,0,0,0.25)]">
+                        <Image
+                          src="/images/image1.png"
+                          alt="Gas Cylinder"
+                          fill
+                          className="object-contain"
+                        />
+                      </div>
+                      <div className="flex flex-col">
+                        <span className="text-[20px] font-bold text-[#1317E4] leading-none font-[family-name:var(--font-barlow-semi-condensed)] tracking-tight">
+                          {tx.title}
+                        </span>
+                        <span className="text-sm font-medium text-[#1317E4] mt-1 font-[family-name:var(--font-barlow-semi-condensed)]">
+                          {format(tx.date, "HH:mm, yy/MM/dd")}
+                        </span>
+                      </div>
+                    </div>
+
+                    {/* RIGHT: Payment Method Outline Badge */}
+                    <div className="border border-[#838EF8] text-[#838EF8] font-mono text-[10px] font-bold px-2 py-0.5 rounded-[6px] uppercase tracking-wider shrink-0 select-none">
+                      {tx.paymentMethod}
+                    </div>
+                  </div>
+                ))}
+
+                {filteredTransactions.length === 0 && (
+                  <div className="w-full py-10 text-center text-xs text-[#838EF8] font-bold uppercase tracking-wider font-mono">
+                    NO {activeFilter} TRANSACTIONS
+                  </div>
+                )}
+              </div>
+
+              {/* SEE ALL LINK */}
+              <div className="flex items-center justify-center pt-2">
+                <button
+                  type="button"
+                  className="text-[11px] font-bold tracking-wider uppercase text-[#838EF8] hover:text-[#1317E4] transition-colors cursor-pointer select-none"
+                >
+                  SEE ALL
+                </button>
+              </div>
+            </div>
           </div>
-        ) : (
-          <div className="w-full py-20 flex flex-col items-center justify-center text-center">
-            <p className="text-[18px] text-[#1317E4] font-mono font-bold tracking-wider uppercase mb-1">
-              NO CASHIER TRANSACTIONS
-            </p>
-            <span className="text-[13px] text-neutral-400 font-mono uppercase">
-              Completed walk-in and verified orders will appear here
-            </span>
-          </div>
-        )}
-      </div>
-    </FullScreenView>
+        </motion.div>
+      )}
+    </AnimatePresence>
   );
 }

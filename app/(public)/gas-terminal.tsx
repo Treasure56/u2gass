@@ -16,7 +16,7 @@ import {
   calculateGasOrder,
   deleteKeypadDigit,
   appendKeypadDigit,
-} from "@/functions";
+} from "@/helpers/functions";
 
 export default function GasTerminal({
   initialValue = "1KG",

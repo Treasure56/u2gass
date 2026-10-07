@@ -1,16 +1,8 @@
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
-import type { Product } from "@/types";
+import type { Product, CartItem } from "@/types";
 
-export interface CartItem {
-  id: string;
-  name: string;
-  description: string;
-  image: string;
-  priceNaira: number;
-  quantity: number;
-  unavailable?: boolean;
-}
+export type { CartItem };
 
 interface CartState {
   items: CartItem[];

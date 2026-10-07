@@ -1,7 +1,5 @@
-"use client";
-
+import TerminalKey from "@/app/(public)/terminal-keyboard";
 import { motion } from "framer-motion";
-import { TerminalKey } from "@/app/(public)/terminal-keyboard";
 
 export interface KeypadKeyItem {
   label: string;
